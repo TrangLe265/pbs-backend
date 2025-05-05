@@ -6,6 +6,10 @@ const liftTypeQueries = require('./sql/queries/lift_type.js');
 
 const app = express(); 
 
+app.get('/',async(req,res) => {
+  res.json('Testing server')
+})
+
 app.get('/lift-type', async(req,res) => {
     try {
         const result = await liftTypeQueries.getAllLiftTypes();
