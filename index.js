@@ -3,11 +3,22 @@ const Joi = require('joi'); // this class Joi from package Joi is used for data 
 const express = require('express'); 
 const db = require('./db.js'); 
 const liftTypeQueries = require('./sql/queries/lift_type.js');
+const {seedData} = require('./sql/queries/seed.js'); 
 
 const app = express(); 
 
 app.get('/',async(req,res) => {
   res.json('Testing server')
+})
+
+app.get('/user',async(req,res) => {
+  try {
+    const result = await liftTypeQueries.getAllUsers(); 
+    res.json(result.rows);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Internal Server Error'); 
+  }
 })
 
 app.get('/lift-type', async(req,res) => {
@@ -29,6 +40,16 @@ app.get('/lift-type/:name', async (req, res) => {
       console.error(err);
       res.status(500).send('Internal Server Error');
     }
+});
+
+const runSeedData = (async () => {
+  try {
+      console.log('Running seed data...');
+      await seedData(); // Call the seedData function
+      console.log('Seed data completed.');
+  } catch (err) {
+      console.error('Error during seeding:', err);
+  }
 });
 
 const port = process.env.Port || 3000; 
