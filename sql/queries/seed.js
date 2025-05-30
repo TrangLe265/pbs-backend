@@ -10,25 +10,36 @@ const seedData = async () => {
             ON CONFLICT DO NOTHING;
         `); 
 
+        const userId = '7e8c6f0c-9bf3-44c1-899e-be8991097826';
+        const liftTypeId = 'a0c963e8-caaa-4740-8a04-b7cb4ac856c1';
+
+        if (!userId || !liftTypeId){
+            throw new Error('Required FK values not found in app_user or lift_type');
+        }
+
+        const result = await db.query('SELECT COUNT(*) FROM lift');
+        const liftCount = parseInt(result.rows[0].count, 10);
+        
+        if (liftCount > 0) {
+            console.log('Seed data already exists. Skipping seeding.');
+            return;
+        }
+
         await db.query(`
-            INSERT INTO lift (id, user_id, weight_lifted, lift_type_id, date, notes)
-            SELECT 
-            gen_random_uuid(), 
-            app_user.id, 
-            100.0, 
-            lift_type.id, 
-            CURRENT_DATE, 
-            'First lift'
-            FROM app_user, lift_type
-            WHERE app_user.name = 'John Doe' AND lift_type.name = 'squat'
+            INSERT INTO lift (id,user_id, weight_lifted, lift_type_id, date, notes)
+            VALUES 
+            (gen_random_uuid(), $1,
+            100.0,
+            $2,
+            CURRENT_DATE,
+            'first attempt')
             ON CONFLICT DO NOTHING;
-        `)
+        `, [userId, liftTypeId]); 
+
         console.log('Seeding completed successfully'); 
     } catch (err){
         console.log('Error while seeding: ', err); 
-    } finally {
-        process.exit(); 
-    }
+    } 
 }; 
 
 module.exports = {seedData}; 
