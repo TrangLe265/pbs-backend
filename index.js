@@ -11,25 +11,15 @@ const { errors } = require('pg-promise');
 
 const app = express(); 
 
-app.get('/ping', async (req, res) => res.send('pong'));
-
 app.get('/',async(req,res) => {
   res.json('Testing server')
 })
 
-app.get('/lift-type', async(req,res) => {
-    try {
-        const result = await liftTypeQueries.getAllLiftTypes();
-        res.json(result.rows);
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-      }
-})
-
+//get id of a lift-type
+//TODO: REMOVE THIS ENDPOINT AFTER TESTING ALL DONE
 app.get('/lift-type/:name', async (req, res) => {
   try {
-      const { name } = req.params; // Extract the 'name' parameter from the URL
+      const { name } = req.params; 
       const result = await liftTypeQueries.getLiftTypeByName(name);
       res.json(result.rows);
     } catch (err) {
@@ -38,6 +28,8 @@ app.get('/lift-type/:name', async (req, res) => {
     }
 });
 
+//get all lifts of all users
+//TODO: REMOVE THIS ENDPOINT AFTER TESTING ALL DONE
 app.get('/lift', async(req,res) => {
   try{
     const result = await liftQueries.getAllLift();
@@ -48,10 +40,24 @@ app.get('/lift', async(req,res) => {
   }
 })
 
-app.get('/lift/user/:userId', async (req,res) => {
+//get all the lift types
+app.get('/lift-type', async(req,res) => {
+    try {
+        const result = await liftTypeQueries.getAllLiftTypes();
+        res.json(result.rows);
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      }
+})
+
+
+
+//get all lifts of a specific typer by an user 
+app.get('/lift/user/:userId/:liftTypeId', async (req,res) => {
   try {
-    const {userId} = req.params; 
-    const result = await liftQueries.getLiftByUserId(userId);
+    const { userId, liftTypeId } = req.params;  
+    const result = await liftQueries.getLiftByTypeByUserId(userId, liftTypeId);
     res.json(result.rows); 
   } catch (err) {
     console.log(err); 
