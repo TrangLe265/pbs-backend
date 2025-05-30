@@ -4,7 +4,8 @@ const express = require('express');
 const db = require('./db.js'); 
 const liftTypeQueries = require('./sql/queries/lift_type.js');
 const liftQueries = require('./sql/queries/lift.js');
-const {seedData} = require('./sql/queries/seed.js'); 
+const {seedUserData} = require('./sql/queries/seed_app_user.js'); 
+const {seedLiftData} = require('./sql/queries/seed_lift.js');
 
 const app = express(); 
 
@@ -51,9 +52,10 @@ app.listen(port, async () => {
   console.log(`Server started: Listening on port ${port}...`);
   try {
     console.log('Running seed data...');
-    await seedData();
-    console.log('Seed data completed.');
-  } catch (err) {
+    await seedUserData();
+    await seedLiftData(); 
+  } 
+  catch (err) {
     console.error('Error during seeding:', err);
   }
 });
