@@ -6,6 +6,8 @@ const liftTypeQueries = require('./sql/queries/lift_type.js');
 const liftQueries = require('./sql/queries/lift.js');
 const {seedUserData} = require('./sql/queries/seed_app_user.js'); 
 const {seedLiftData} = require('./sql/queries/seed_lift.js');
+const { errors } = require('pg-promise');
+
 
 const app = express(); 
 
@@ -43,6 +45,29 @@ app.get('/lift', async(req,res) => {
   }catch(err){
     console.error(err); 
     res.status(500).send('Internal Server Error')
+  }
+})
+
+app.get('/lift/user/:userId', async (req,res) => {
+  try {
+    const {userId} = req.params; 
+    const result = await liftQueries.getLiftByUserId(userId);
+    res.json(result.rows); 
+  } catch (err) {
+    console.log(err); 
+    res.status(500).send('Internal Server Error'); 
+  }
+})
+
+//get lift by liftId
+app.get('/lift/id/:liftId', async (req,res) => {
+  try {
+    const {liftId} = req.params; 
+    const result = await liftQueries.getLiftByLiftId(liftId);
+    res.json(result.rows); 
+  } catch (err) {
+    console.log(err); 
+    res.status(500).send('Internal Server Error'); 
   }
 })
 
