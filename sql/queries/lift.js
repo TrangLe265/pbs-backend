@@ -47,9 +47,20 @@ const addLift = async (userId, weightLifted, liftTypeId, date, notes) => {
     }
 };
 
+const deleteLiftById = async (liftId) => {
+    try {
+        return await db.query("DELETE FROM lift WHERE id = $1",[liftId]); 
+
+    } catch (err){
+        console.error(`Error deleting lift with id ${liftId}`);
+        throw err;
+    }
+}
+
 module.exports = {
     getAllLift, 
     getLiftByTypeByUserId,  
     getLiftByLiftId, 
-    addLift
+    addLift, 
+    deleteLiftById
 }

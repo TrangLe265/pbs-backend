@@ -102,6 +102,17 @@ app.post('/lift', async(req,res) => {
   }
 })
 
+app.delete('/lift/:liftId', async(req,res) => {
+  try {
+    const { liftId } = req.params;
+    await liftQueries.deleteLiftById(liftId); 
+    res.status(200).send({ message: 'Lift deleted successfully' });
+  } catch (err){
+    console.log(err); 
+    res.status(500).send('Internal Server Error'); 
+  }
+})
+
 const port = process.env.PORT || 3000;
 console.log('About to start server...');
 app.listen(port, async () => {
