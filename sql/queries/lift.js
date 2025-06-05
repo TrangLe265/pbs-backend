@@ -57,10 +57,21 @@ const deleteLiftById = async (liftId) => {
     }
 }
 
+const editLiftById = async ( weightLifted, date, notes, liftId) => {
+    try {
+        return await db.query("UPDATE lift SET weight_lifted = $1, date = $2, notes = $3 WHERE id = $4",[weightLifted, date, notes, liftId])
+
+    } catch (err){
+        console.error(`Error editing lift with id ${liftId}`);
+        throw err;
+    }
+}
+
 module.exports = {
     getAllLift, 
     getLiftByTypeByUserId,  
     getLiftByLiftId, 
     addLift, 
-    deleteLiftById
+    deleteLiftById, 
+    editLiftById
 }

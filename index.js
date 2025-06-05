@@ -53,8 +53,6 @@ app.get('/lift-type', async(req,res) => {
       }
 })
 
-
-
 //get all lifts of a specific typer by an user 
 app.get('/lift/user/:userId/:liftTypeId', async (req,res) => {
   try {
@@ -110,6 +108,22 @@ app.delete('/lift/:liftId', async(req,res) => {
   } catch (err){
     console.log(err); 
     res.status(500).send('Internal Server Error'); 
+  }
+})
+
+app.put('/lift/:liftId', async(req,res) => {
+  try {
+    const {liftId} = req.params;
+    const { weight_lifted, date, notes } = req.body;
+    await liftQueries.editLiftById(
+      weight_lifted, date, notes, liftId
+    );
+
+   res.status(201).send({message: 'Lift edited successfully'});
+    
+  } catch (err){
+      console.log(err); 
+      res.status(500).send('Internal Server Error'); 
   }
 })
 
