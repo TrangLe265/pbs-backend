@@ -11,6 +11,8 @@ const { errors } = require('pg-promise');
 
 const app = express(); 
 
+app.use(express.json()); 
+
 app.get('/',async(req,res) => {
   res.json('Testing server')
 })
@@ -74,6 +76,29 @@ app.get('/lift/id/:liftId', async (req,res) => {
   } catch (err) {
     console.log(err); 
     res.status(500).send('Internal Server Error'); 
+  }
+})
+
+app.post('/lift', async(req,res) => {
+  try {
+
+    const {user_id, weight_lifted, lift_type_id, date, notes } = req.body;
+    await liftQueries.addLift(
+      user_id,
+      weight_lifted,
+      lift_type_id,
+      date,
+      notes, 
+    );
+
+   res.status(201).send({
+    message: 'Lift added successfully',
+    lift: {user_id,weight_lifted,lift_type_id,date,notes}
+  });
+    
+  } catch (err){
+      console.log(err); 
+      res.status(500).send('Internal Server Error'); 
   }
 })
 

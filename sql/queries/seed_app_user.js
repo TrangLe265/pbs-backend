@@ -3,7 +3,8 @@ const db = require("../../db.js");
 const seedUserData = async () => {
     try {
         const result = await db.query('SELECT COUNT(*) FROM app_user'); 
-        const userCount = parseInt(result.rows[0].count)
+        const userCount = parseInt(result.rows[0].count); 
+        
         if (userCount > 0){
             console.log('Users data already exist, skip seeding'); 
         } else {

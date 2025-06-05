@@ -32,8 +32,24 @@ const getLiftByTypeByUserId = async (userId, liftTypeId) => {
     }
 };
 
+const addLift = async (userId, weightLifted, liftTypeId, date, notes) => {
+    try {
+        return await db.query(
+            'INSERT INTO lift (id,user_id, weight_lifted, lift_type_id, date, notes) VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)',
+            [userId, weightLifted, liftTypeId, date, notes]
+        );
+    } catch (err) {
+        console.error(
+            `Error adding new lift`,
+            err
+        );
+        throw err;
+    }
+};
+
 module.exports = {
     getAllLift, 
     getLiftByTypeByUserId,  
-    getLiftByLiftId
+    getLiftByLiftId, 
+    addLift
 }
