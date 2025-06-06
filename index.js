@@ -13,9 +13,15 @@ const app = express();
 
 app.use(express.json()); 
 
-app.get('/',async(req,res) => {
-  res.json('Testing server')
-})
+//Define a JOI schemna for data validation
+const liftSchema = Joi.object({
+  user_id: Joi.string().uuid().required(),
+  weight_lifted: Joi.number().positive().required(),
+  lift_type_id: Joi.string().uuid().required(),
+  date: Joi.date().required(),
+  notes: Joi.string().allow('').optional()
+});
+
 
 //get id of a lift-type
 //TODO: REMOVE THIS ENDPOINT AFTER TESTING ALL DONE
@@ -77,26 +83,27 @@ app.get('/lift/id/:liftId', async (req,res) => {
   }
 })
 
-app.post('/lift', async(req,res) => {
+app.post('/lift', async (req, res) => {
+  const { error, value } = liftSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    // Return all validation errors
+    return res.status(400).json({
+      message: "Validation error",
+      details: error.details.map(d => d.message)
+    });
+  }
+
   try {
+    const { user_id, weight_lifted, lift_type_id, date, notes } = value;
+    await liftQueries.addLift(user_id, weight_lifted, lift_type_id, date, notes);
 
-    const {user_id, weight_lifted, lift_type_id, date, notes } = req.body;
-    await liftQueries.addLift(
-      user_id,
-      weight_lifted,
-      lift_type_id,
-      date,
-      notes, 
-    );
-
-   res.status(201).send({
-    message: 'Lift added successfully',
-    lift: {user_id,weight_lifted,lift_type_id,date,notes}
-  });
-    
-  } catch (err){
-      console.log(err); 
-      res.status(500).send('Internal Server Error'); 
+    res.status(201).send({
+      message: 'Lift added successfully',
+      lift: { user_id, weight_lifted, lift_type_id, date, notes }
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Internal Server Error');
   }
 })
 
@@ -113,6 +120,15 @@ app.delete('/lift/:liftId', async(req,res) => {
 
 app.put('/lift/:liftId', async(req,res) => {
   try {
+    const { error, value } = liftSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+    // Return all validation errors
+    return res.status(400).json({
+      message: "Validation error",
+      details: error.details.map(d => d.message)
+    });
+  }
+
     const {liftId} = req.params;
     const { weight_lifted, date, notes } = req.body;
     await liftQueries.editLiftById(
