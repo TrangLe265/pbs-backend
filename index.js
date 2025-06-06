@@ -4,6 +4,7 @@ const express = require('express');
 const db = require('./db.js'); 
 const liftTypeQueries = require('./sql/queries/lift_type.js');
 const liftQueries = require('./sql/queries/lift.js');
+const dotsQueries = require('./sql/queries/dots_score.js');
 const {seedUserData} = require('./sql/queries/seed_app_user.js'); 
 const {seedLiftData} = require('./sql/queries/seed_lift.js');
 const { errors } = require('pg-promise');
@@ -83,6 +84,7 @@ app.get('/lift/id/:liftId', async (req,res) => {
   }
 })
 
+//add new lift for an user
 app.post('/lift', async (req, res) => {
   const { error, value } = liftSchema.validate(req.body, { abortEarly: false });
   if (error) {
@@ -107,6 +109,7 @@ app.post('/lift', async (req, res) => {
   }
 })
 
+//delete lift by liftId
 app.delete('/lift/:liftId', async(req,res) => {
   try {
     const { liftId } = req.params;
@@ -118,6 +121,7 @@ app.delete('/lift/:liftId', async(req,res) => {
   }
 })
 
+//edit lift by its id
 app.put('/lift/:liftId', async(req,res) => {
   try {
     const { error, value } = liftSchema.validate(req.body, { abortEarly: false });
@@ -141,6 +145,22 @@ app.put('/lift/:liftId', async(req,res) => {
       console.log(err); 
       res.status(500).send('Internal Server Error'); 
   }
+})
+
+app.get('/dots/:userId', async(req,res) => {
+  try {
+    const {userId} = req.params;
+    const result = await dotsQueries.getAllScore(userId);
+    res.json(result.rows);
+  }catch(err){
+    console.log(err); 
+    res.status(500).send('Internal Server Error'); 
+  }
+})
+
+//TODO: add Post endpoint for dots
+app.post('/dots/:userId', async(req,res) => {
+
 })
 
 const port = process.env.PORT || 3000;
