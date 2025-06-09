@@ -147,7 +147,8 @@ app.put('/lift/:liftId', async(req,res) => {
   }
 })
 
-app.get('/dots/:userId', async(req,res) => {
+//get all the dots score of a specific user by their userId
+app.get('/dots/user/:userId', async(req,res) => {
   try {
     const {userId} = req.params;
     const result = await dotsQueries.getAllScore(userId);
@@ -158,7 +159,31 @@ app.get('/dots/:userId', async(req,res) => {
   }
 })
 
-//TODO: add Post endpoint for dots
+app.get('/dots/:scoreId', async (req, res) => {
+  try {
+    const { scoreId } = req.params;
+    console.log(scoreId); 
+    const result = await dotsQueries.getScoreById(scoreId);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+app.delete('/dots/:scoreId', async (req, res) => {
+  try {
+    const { scoreId } = req.params;
+    await dotsQueries.deleteScoreById(scoreId);
+    res.status(200).send('DOTS score deleted successfully')
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//add new score for an user
 app.post('/dots/:userId', async(req,res) => {
   try {
     const { score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body; 
@@ -174,6 +199,8 @@ app.post('/dots/:userId', async(req,res) => {
     res.status(500).send('Internal Server Error')
   }
 })
+
+
 
 const port = process.env.PORT || 3000;
 console.log('About to start server...');

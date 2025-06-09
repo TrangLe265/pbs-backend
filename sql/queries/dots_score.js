@@ -1,12 +1,20 @@
 const { ParameterizedQuery } = require("pg-promise");
 const db = require("../../db.js"); 
-const { get } = require("underscore");
 
 const getAllScore = async (userId) => {
     try {
         return await db.query('SELECT * from dots_score WHERE user_id=$1',[userId]); 
     } catch (err){
         console.error('Error fetching all records: ', err);
+        throw err; 
+    }
+}
+
+const getScoreById = async (scoreId) => {
+    try{
+        return await db.query("SELECT * FROM dots_score WHERE id=$1", [scoreId]); 
+    } catch (err){
+        console.error(`Error fetching dots score with id ${scoreId}`); 
         throw err; 
     }
 }
@@ -23,7 +31,18 @@ const addScore = async (score, userId, benchId, squatId, deadliftId) => {
     }
 };
 
+const deleteScoreById = async (scoreId) => {
+    try {
+        await db.query("DELETE FROM dots_score WHERE id=$1", [scoreId]); 
+    } catch(err){
+        console.error(`Error deleting dots score with id ${scoreId}`); 
+        throw err; 
+    }
+}
+
 module.exports = {
     getAllScore, 
+    getScoreById,
     addScore, 
+    deleteScoreById,
 }
