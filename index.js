@@ -160,7 +160,19 @@ app.get('/dots/:userId', async(req,res) => {
 
 //TODO: add Post endpoint for dots
 app.post('/dots/:userId', async(req,res) => {
+  try {
+    const { score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body; 
+    await dotsQueries.addScore(score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id); 
 
+    res.status(201).send({
+      message: 'New DOTS score added successfully',
+      dots: { score, bench_lift_id, squat_lift_id, deadlift_lift_id }
+    });
+
+  } catch(err){
+    console.error(err); 
+    res.status(500).send('Internal Server Error')
+  }
 })
 
 const port = process.env.PORT || 3000;
