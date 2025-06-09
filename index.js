@@ -7,8 +7,6 @@ const liftQueries = require('./sql/queries/lift.js');
 const dotsQueries = require('./sql/queries/dots_score.js');
 const {seedUserData} = require('./sql/queries/seed_app_user.js'); 
 const {seedLiftData} = require('./sql/queries/seed_lift.js');
-const { errors } = require('pg-promise');
-
 
 const app = express(); 
 
@@ -60,7 +58,7 @@ app.get('/lift-type', async(req,res) => {
       }
 })
 
-//get all lifts of a specific typer by an user 
+//get all lifts of a specific type by userId 
 app.get('/lift/user/:userId/:liftTypeId', async (req,res) => {
   try {
     const { userId, liftTypeId } = req.params;  
@@ -72,8 +70,8 @@ app.get('/lift/user/:userId/:liftTypeId', async (req,res) => {
   }
 })
 
-//get lift by liftId
-app.get('/lift/id/:liftId', async (req,res) => {
+//get a specific lift by liftId
+app.get('/lift/:liftId', async (req,res) => {
   try {
     const {liftId} = req.params; 
     const result = await liftQueries.getLiftByLiftId(liftId);
@@ -184,7 +182,7 @@ app.delete('/dots/:scoreId', async (req, res) => {
 });
 
 //add new score for an user
-app.post('/dots/:userId', async(req,res) => {
+app.post('/dots', async(req,res) => {
   try {
     const { score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body; 
     await dotsQueries.addScore(score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id); 
@@ -199,8 +197,6 @@ app.post('/dots/:userId', async(req,res) => {
     res.status(500).send('Internal Server Error')
   }
 })
-
-
 
 const port = process.env.PORT || 3000;
 console.log('About to start server...');
