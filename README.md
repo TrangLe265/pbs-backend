@@ -71,8 +71,6 @@ erDiagram
 
 ---
 
----
-
 ## Set Up Instructions
 
 1. **Clone the repository**
@@ -115,10 +113,7 @@ erDiagram
    - (Optional) Seed initial data if needed.
 
 5. **Start the server**
-   ```bash
-   npm start
-   ```
-   or for development with auto-reload:
+  
    ```bash
    npx nodemon index.js
    ```
@@ -218,7 +213,7 @@ http://localhost:3000/
 
 - POST and PUT endpoints for adding or editing lifts use server-side validation (Joi) to ensure data integrity.
 
-
+---
 ## Notes
 
 - All endpoints return JSON.
