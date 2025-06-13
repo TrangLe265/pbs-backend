@@ -5,7 +5,8 @@ const db = require('./db.js');
 const liftTypeQueries = require('./sql/queries/lift_type.js');
 const liftQueries = require('./sql/queries/lift.js');
 const dotsQueries = require('./sql/queries/dots_score.js');
-const dotsAssessmentQueries = require('./sql/queries/dots_assessment.js')
+const dotsAssessmentQueries = require('./sql/queries/dots_assessment.js'); 
+const coefficientsQueries = require('./sql/queries/coefficients.js');
 const {seedUserData} = require('./sql/queries/seed_app_user.js'); 
 const {seedLiftData} = require('./sql/queries/seed_lift.js');
 
@@ -22,7 +23,7 @@ const liftSchema = Joi.object({
   notes: Joi.string().allow('').optional()
 });
 
-
+/*
 //get id of a lift-type
 //TODO: REMOVE THIS ENDPOINT AFTER TESTING ALL DONE
 app.get('/lift-type/:name', async (req, res) => {
@@ -46,7 +47,7 @@ app.get('/lift', async(req,res) => {
     console.error(err); 
     res.status(500).send('Internal Server Error')
   }
-})
+})*/
 
 //get all the lift types
 app.get('/lift-type', async(req,res) => {
@@ -222,6 +223,19 @@ app.get('/classification/score/:score', async(req,res) => {
     res.status(500).send('Internal Server Error')
   }
 })
+
+//get the coefficients for dots calculation by sex
+app.get('/coefficients/:sex', async(req,res) => {
+   try {
+      const sex = req.params.sex; 
+      const result = await coefficientsQueries.getCoefficientsBySex(sex); 
+      res.json(result.rows); 
+   } catch (err) {
+    console.error(err); 
+    res.status(500).send('Internal Server Error'); 
+   }
+})
+
 
 const port = process.env.PORT || 3000;
 console.log('About to start server...');
