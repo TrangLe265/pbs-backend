@@ -5,6 +5,7 @@ const db = require('./db.js');
 const liftTypeQueries = require('./sql/queries/lift_type.js');
 const liftQueries = require('./sql/queries/lift.js');
 const dotsQueries = require('./sql/queries/dots_score.js');
+const dotsAssessmentQueries = require('./sql/queries/dots_assessment.js')
 const {seedUserData} = require('./sql/queries/seed_app_user.js'); 
 const {seedLiftData} = require('./sql/queries/seed_lift.js');
 
@@ -194,6 +195,30 @@ app.post('/dots', async(req,res) => {
 
   } catch(err){
     console.error(err); 
+    res.status(500).send('Internal Server Error')
+  }
+})
+
+//Get all classifications for DOTS Score
+app.get('/classification', async(req,res) => {
+  try {
+    const result = await dotsAssessmentQueries.getAllClassifications(); 
+    res.json(result.rows); 
+  }catch(err){
+    console.error(err); 
+    res.status(500).send('Internal Server Error')
+  }
+})
+
+//Get the classification for a specific score
+app.get('/classification/score/:score', async(req,res) => {
+  try {
+    const score = Number(req.params.score);
+    const result = await dotsAssessmentQueries.getClassificationByScore(score); 
+    res.json(result.rows); 
+
+  } catch (err){
+    console.error(err);
     res.status(500).send('Internal Server Error')
   }
 })
