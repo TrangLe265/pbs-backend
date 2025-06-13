@@ -13,6 +13,63 @@ DOTS (Dynamic Objective Team Scoring) is a widely used formula in powerlifting t
 ## Prerequisites
 - Node.js (v16 or later)
 - PostgreSQL (v13 or later)
+---
+
+## Data Model
+
+```mermaid
+erDiagram
+    APP_USER {
+        uuid id PK
+        text name
+        text sex
+        float body_weight
+    }
+    LIFT_TYPE {
+        uuid id PK
+        text name
+    }
+    LIFT {
+        uuid id PK
+        uuid user_id FK
+        float weight_lifted
+        uuid lift_type_id FK
+        date date
+        text notes
+    }
+    DOTS_SCORE {
+        uuid id PK
+        decimal score
+        date date_calculated
+        uuid user_id FK
+        uuid bench_lift_id FK
+        uuid squat_lift_id FK
+        uuid deadlift_lift_id FK
+    }
+    DOTS_ASSESSMENT {
+        int id PK
+        decimal min_score
+        decimal max_score
+        varchar label
+        text description
+    }
+    DOTS_COEFFICIENTS {
+        int id PK
+        varchar sex
+        double a
+        double b
+        double c
+        double d
+        double e
+    }
+
+    APP_USER ||--o{ LIFT : "has"
+    LIFT_TYPE ||--o{ LIFT : "is type"
+    APP_USER ||--o{ DOTS_SCORE : "has"
+    LIFT ||--o{ DOTS_SCORE : "bench/squat/deadlift"
+```
+
+---
 
 ---
 
@@ -161,13 +218,6 @@ http://localhost:3000/
 
 - POST and PUT endpoints for adding or editing lifts use server-side validation (Joi) to ensure data integrity.
 
----
-
-## Seeding
-
-- On server start, initial user and lift data are seeded if not already present.
-
----
 
 ## Notes
 
