@@ -1,5 +1,6 @@
-# My PBS Backend
-This backend powers a Powerlifting records and calculation frontend application. Built with Node.js, Express, and PostgreSQL, it manages lift data, calculates DOTS scores for fair lifter comparison, and provides a RESTful API for all core features. It is built with Node.js, Express, and PostgreSQL.
+# PowerLifting Records Backend
+
+This backend powers a Powerlifting records and calculation frontend application. Built with Node.js, Express, and PostgreSQL, it manages lift data, calculates DOTS scores for fair lifter comparison, and provides a RESTful API for all core features.
 
 DOTS (Dynamic Objective Team Scoring) is a widely used formula in powerlifting to fairly compare lifters of different body weights. By calculating a DOTS score for each lifter, the system enables objective ranking and classification regardless of weight class.
 
@@ -12,6 +13,62 @@ DOTS (Dynamic Objective Team Scoring) is a widely used formula in powerlifting t
 ## Prerequisites
 - Node.js (v16 or later)
 - PostgreSQL (v13 or later)
+
+---
+
+## Set Up Instructions
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd my-pbs-backend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+
+   Create a `.env` file in the root directory and add your PostgreSQL credentials:
+   ```
+   DB_USER=your_db_user
+   DB_PASSWORD=your_db_password
+   DB_NAME=your_db_name
+   DB_PORT=5432
+   PORT=3000
+   ```
+
+4. **Set up the database**
+
+   - Create your database in PostgreSQL if it doesn't exist:
+     ```sql
+     CREATE DATABASE your_db_name;
+     ```
+   - Run the migration scripts in the `sql/mirgations/` folder to create the necessary tables:
+     ```bash
+     psql -U your_db_user -d your_db_name -f sql/mirgations/create_lift_type_table.sql
+     psql -U your_db_user -d your_db_name -f sql/mirgations/create_app_user_table.sql
+     psql -U your_db_user -d your_db_name -f sql/mirgations/create_lift_table.sql
+     psql -U your_db_user -d your_db_name -f sql/mirgations/create_dots_score_table.sql
+     psql -U your_db_user -d your_db_name -f sql/mirgations/create_dots_coefficients_table.sql
+     psql -U your_db_user -d your_db_name -f sql/mirgations/create_dots_assessment_table.sql
+     ```
+   - (Optional) Seed initial data if needed.
+
+5. **Start the server**
+   ```bash
+   npm start
+   ```
+   or for development with auto-reload:
+   ```bash
+   npx nodemon index.js
+   ```
+
+6. **Test the API**
+   - The server will run at [http://localhost:3000/](http://localhost:3000/)
+   - Use Postman, curl, or your frontend to interact with the endpoints.
 
 ---
 
@@ -102,7 +159,7 @@ http://localhost:3000/
 
 ## Validation
 
-- POST endpoints for new lift use server-side validation (Joi) to ensure data integrity.
+- POST and PUT endpoints for adding or editing lifts use server-side validation (Joi) to ensure data integrity.
 
 ---
 
