@@ -11,6 +11,7 @@ const {seedUserData} = require('./sql/queries/seed_app_user.js');
 const {seedLiftData} = require('./sql/queries/seed_lift.js');
 
 const app = express(); 
+require('./swagger')(app);
 
 app.use(express.json()); 
 
@@ -23,33 +24,17 @@ const liftSchema = Joi.object({
   notes: Joi.string().allow('').optional()
 });
 
-/*
-//get id of a lift-type
-//TODO: REMOVE THIS ENDPOINT AFTER TESTING ALL DONE
-app.get('/lift-type/:name', async (req, res) => {
-  try {
-      const { name } = req.params; 
-      const result = await liftTypeQueries.getLiftTypeByName(name);
-      res.json(result.rows);
-    } catch (err) {
-      console.error(err);
-      res.status(500).send('Internal Server Error');
-    }
-});
 
-//get all lifts of all users
-//TODO: REMOVE THIS ENDPOINT AFTER TESTING ALL DONE
-app.get('/lift', async(req,res) => {
-  try{
-    const result = await liftQueries.getAllLift();
-    res.json(result.rows)
-  }catch(err){
-    console.error(err); 
-    res.status(500).send('Internal Server Error')
-  }
-})*/
-
-//get all the lift types
+/**
+ * @swagger
+ * /lift-type:
+ *   get:
+ *     summary: Get all available lift types
+ *     tags: [Lift types]
+ *     responses:
+ *       200:
+ *         description: Existing lift types
+ */
 app.get('/lift-type', async(req,res) => {
     try {
         const result = await liftTypeQueries.getAllLiftTypes();
@@ -60,19 +45,24 @@ app.get('/lift-type', async(req,res) => {
       }
 })
 
-//get all lifts of a specific type by userId 
-app.get('/lift/user/:userId/:liftTypeId', async (req,res) => {
-  try {
-    const { userId, liftTypeId } = req.params;  
-    const result = await liftQueries.getLiftByTypeByUserId(userId, liftTypeId);
-    res.json(result.rows); 
-  } catch (err) {
-    console.log(err); 
-    res.status(500).send('Internal Server Error'); 
-  }
-})
-
 //get a specific lift by liftId
+/**
+ * @swagger
+ * /lift/{liftId}:
+ *   get:
+ *     summary: Get a specific lift by its ID
+ *     tags: [Lifts]
+ *     parameters:
+ *       - in: path
+ *         name: liftId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The lift response by id
+ *     responses:
+ *       200:
+ *         description: A specific lift
+ */
 app.get('/lift/:liftId', async (req,res) => {
   try {
     const {liftId} = req.params; 
@@ -84,11 +74,117 @@ app.get('/lift/:liftId', async (req,res) => {
   }
 })
 
+// get all lifts of a specific type by userId 
+/**
+ * @swagger
+ * /lift/user/{userId}/{liftTypeId}:
+ *   get:
+ *     summary: Get a user's lifts of a certain lift type
+ *     tags: [Lifts]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *       - in: path
+ *         name: liftTypeId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The lift type ID
+ *     responses:
+ *       200:
+ *         description: The lift response by lift type id and user id
+ * 
+ */
+app.get('/lift/user/:userId/:liftTypeId', async (req,res) => {
+  try {
+    const { userId, liftTypeId } = req.params;  
+    
+    const result = await liftQueries.getLiftByTypeByUserId(userId, liftTypeId); 
+
+    res.json(result.rows); 
+  } catch (err) {
+    console.log(err); 
+    res.status(500).send('Internal Server Error'); 
+  }
+})
+
+
 //add new lift for an user
+/**
+ * @swagger
+ * /lift:
+ *   post:
+ *     summary: Create a new lift
+ *     tags: [Lifts]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: string
+ *                 format: uuid
+ *               weight_lifted:
+ *                 type: number
+ *               lift_type_id:
+ *                 type: string
+ *                 format: uuid
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               notes:
+ *                 type: string
+ *             required:
+ *               - user_id
+ *               - weight_lifted
+ *               - lift_type_id
+ *               - date
+ *     responses:
+ *       201:
+ *         description: Lift added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 lift:
+ *                   type: object
+ *                   properties:
+ *                     user_id:
+ *                       type: string
+ *                     weight_lifted:
+ *                       type: number
+ *                     lift_type_id:
+ *                       type: string
+ *                     date:
+ *                       type: string
+ *                     notes:
+ *                       type: string
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
 app.post('/lift', async (req, res) => {
   const { error, value } = liftSchema.validate(req.body, { abortEarly: false });
   if (error) {
-    // Return all validation errors
     return res.status(400).json({
       message: "Validation error",
       details: error.details.map(d => d.message)
@@ -110,6 +206,23 @@ app.post('/lift', async (req, res) => {
 })
 
 //delete lift by liftId
+/**
+ * @swagger
+ * /lift/{liftId}:
+ *   get:
+ *     summary: Get a specific lift by its ID
+ *     tags: [Lifts]
+ *     parameters:
+ *       - in: path
+ *         name: liftId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The lift response by id
+ *     responses:
+ *       200:
+ *         description: A specific lift
+ */
 app.delete('/lift/:liftId', async(req,res) => {
   try {
     const { liftId } = req.params;
