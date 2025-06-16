@@ -22,9 +22,21 @@ const swaggerDefinition = {
     {
       name: "Lifts",
       description: "API to manage lifts"
+    },
+    {
+      name: "DOTS scores",
+      description: "API to manange an user's DOTS score record"
+    }, 
+    {
+      name: "DOTS classifications",
+      description: "API to retrieve and calculate DOTS classification"
+    },
+    {
+      name: "Coefficients by sex", 
+      description: "API to retrieve sex-specific coefficients for DOTS calculation"
     }
    
-  ]
+  ],
 };
 
 const options = {

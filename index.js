@@ -58,10 +58,10 @@ app.get('/lift-type', async(req,res) => {
  *         schema:
  *           type: string
  *         required: true
- *         description: The lift response by id
+ *         description: The lift id
  *     responses:
  *       200:
- *         description: A specific lift
+ *         description: The lift response by id
  */
 app.get('/lift/:liftId', async (req,res) => {
   try {
@@ -209,8 +209,8 @@ app.post('/lift', async (req, res) => {
 /**
  * @swagger
  * /lift/{liftId}:
- *   get:
- *     summary: Get a specific lift by its ID
+ *   delete:
+ *     summary: Delete a specific lift by its ID
  *     tags: [Lifts]
  *     parameters:
  *       - in: path
@@ -218,10 +218,10 @@ app.post('/lift', async (req, res) => {
  *         schema:
  *           type: string
  *         required: true
- *         description: The lift response by id
+ *         description: The lift id
  *     responses:
  *       200:
- *         description: A specific lift
+ *         description: The lift was successfully deleted
  */
 app.delete('/lift/:liftId', async(req,res) => {
   try {
@@ -235,6 +235,53 @@ app.delete('/lift/:liftId', async(req,res) => {
 })
 
 //edit lift by its id
+/**
+ * @swagger
+ * /lift/{liftId}:
+ *   put:
+ *     summary: Update an existing lift by its ID
+ *     tags: [Lifts]
+ *     parameters:
+ *       - in: path
+ *         name: liftId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The lift id     
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               weight_lifted:
+ *                 type: number
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               notes:
+ *                 type: string
+ *             required:
+ *               - weight_lifted
+ *               - date
+ *     responses:
+ *       201:
+ *         description: Lift was updated successfully
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 details:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ */
 app.put('/lift/:liftId', async(req,res) => {
   try {
     const { error, value } = liftSchema.validate(req.body, { abortEarly: false });
@@ -261,6 +308,23 @@ app.put('/lift/:liftId', async(req,res) => {
 })
 
 //get all the dots score of a specific user by their userId
+/**
+ * @swagger
+ * /dots/user/{userId}:
+ *   get:
+ *     summary: get all DOTS score recorder for an user by the user ID
+ *     tags: [DOTS scores]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user id     
+ *     responses:
+ *       201:
+ *         description: The dots score response with user id
+ */
 app.get('/dots/user/:userId', async(req,res) => {
   try {
     const {userId} = req.params;
@@ -272,6 +336,23 @@ app.get('/dots/user/:userId', async(req,res) => {
   }
 })
 
+/**
+ * @swagger
+ * /dots/{scoreId}:
+ *   get:
+ *     summary: get a specifc DOTS score by the score ID
+ *     tags: [DOTS scores]
+ *     parameters:
+ *       - in: path
+ *         name: scoreId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The score id     
+ *     responses:
+ *       201:
+ *         description: The dots score response with score id
+ */
 app.get('/dots/:scoreId', async (req, res) => {
   try {
     const { scoreId } = req.params;
@@ -284,6 +365,23 @@ app.get('/dots/:scoreId', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /dots/{scoreId}:
+ *   delete:
+ *     summary: delete a specifc DOTS score by the score ID
+ *     tags: [DOTS scores]
+ *     parameters:
+ *       - in: path
+ *         name: scoreId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The score id     
+ *     responses:
+ *       201:
+ *         description: The dots score response with score id
+ */
 app.delete('/dots/:scoreId', async (req, res) => {
   try {
     const { scoreId } = req.params;
@@ -297,6 +395,63 @@ app.delete('/dots/:scoreId', async (req, res) => {
 });
 
 //add new score for an user
+/** 
+* @swagger
+ * /dots:
+ *   post:
+ *     summary: Add a new DOTS score
+ *     tags: [DOTS scores]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               score: 
+ *                 type: number
+ *               user_id:
+ *                 type: string
+ *                 format: uuid
+ *               bench_lift_id:
+ *                 type: string
+ *                 format: uuid
+ *               squat_lift_id:
+ *                 type: string
+ *                 format: uuid
+ *               deadlift_lift_id:
+ *                 type: string
+ *                 format: uuid   
+ *             required:
+ *               - user_id
+ *               - score
+ *               - bench_lift_id
+ *               - squat_lift_id
+ *               - deadlift_lift_id
+ *     responses:
+ *       201:
+ *         description: Lift added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 score:
+ *                   type: object
+ *                   properties:
+ *                     user_id:
+ *                       type: string
+ *                     score:
+ *                       type: number
+ *                     bench_lift_id:
+ *                       type: string
+ *                     squat_lift_id:
+ *                       type: string
+ *                     deadlift_lift_id:
+ *                       type: string
+ */
 app.post('/dots', async(req,res) => {
   try {
     const { score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body; 
@@ -313,7 +468,18 @@ app.post('/dots', async(req,res) => {
   }
 })
 
+
 //Get all classifications for DOTS Score
+/**
+ * @swagger
+ * /classification:
+ *   get:
+ *     summary: Get all the DOTS score classifications
+ *     tags: [DOTS classifications]
+ *     responses:
+ *       200:
+ *         description: The classifications response 
+ */
 app.get('/classification', async(req,res) => {
   try {
     const result = await dotsAssessmentQueries.getAllClassifications(); 
@@ -325,6 +491,23 @@ app.get('/classification', async(req,res) => {
 })
 
 //Get the classification for a specific score
+/**
+ * @swagger
+ * /classification/score/{score}:
+ *   get:
+ *     summary: Get classification for the specific given score
+ *     tags: [DOTS classifications]
+ *     parameters: 
+ *      - in: path
+ *        name: score
+ *        schema: 
+ *          type: number
+ *        required: true
+ *        description: The DOTS score
+ *     responses:
+ *       200:
+ *         description: The classifications response by the given score
+ */
 app.get('/classification/score/:score', async(req,res) => {
   try {
     const score = Number(req.params.score);
@@ -338,6 +521,24 @@ app.get('/classification/score/:score', async(req,res) => {
 })
 
 //get the coefficients for dots calculation by sex
+/**
+ * @swagger
+ * /coefficients/{sex}:
+ *   get:
+ *     summary: Get the coefficients needed for DOTS calculation by sex 
+ *     tags: [Coefficients by sex]
+ *     parameters:
+ *       - in: path
+ *         name: sex
+ *         schema:
+ *           type: string
+ *           enum: [male, female]
+ *         required: true
+ *         description: 2 possible values - 'male' or 'female'
+ *     responses:
+ *       200:
+ *         description: The coefficients response by sex
+ */
 app.get('/coefficients/:sex', async(req,res) => {
    try {
       const sex = req.params.sex; 
