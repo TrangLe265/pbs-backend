@@ -9,6 +9,7 @@ DOTS (Dynamic Objective Team Scoring) is a widely used formula in powerlifting t
 - Record user lifts and calculate DOTS scores
 - DOTS score classification and coefficient endpoints
 - RESTful API endpoints for interacting with the database
+- API documentation with Swagger
 
 ## Prerequisites
 - Node.js (v16 or later)
@@ -121,6 +122,9 @@ erDiagram
 6. **Test the API**
    - The server will run at [http://localhost:3000/](http://localhost:3000/)
    - Use Postman, curl, or your frontend to interact with the endpoints.
+
+7. **API documentation**
+   - API documentation can be found at [http://localhost:3000/api-docs/#/](http://localhost:3000/api-docs/#/)
 
 ---
 
