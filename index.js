@@ -266,7 +266,7 @@ app.delete('/lift/:liftId', async(req,res) => {
  *               - weight_lifted
  *               - date
  *     responses:
- *       201:
+ *       200:
  *         description: Lift was updated successfully
  *       400:
  *         description: Validation error
@@ -299,7 +299,7 @@ app.put('/lift/:liftId', async(req,res) => {
       weight_lifted, date, notes, liftId
     );
 
-   res.status(201).send({message: 'Lift edited successfully'});
+   res.status(200).send({message: 'Lift edited successfully'});
     
   } catch (err){
       console.log(err); 
@@ -322,7 +322,7 @@ app.put('/lift/:liftId', async(req,res) => {
  *         required: true
  *         description: The user id     
  *     responses:
- *       201:
+ *       200:
  *         description: The dots score response with user id
  */
 app.get('/dots/user/:userId', async(req,res) => {
@@ -350,7 +350,7 @@ app.get('/dots/user/:userId', async(req,res) => {
  *         required: true
  *         description: The score id     
  *     responses:
- *       201:
+ *       200:
  *         description: The dots score response with score id
  */
 app.get('/dots/:scoreId', async (req, res) => {
@@ -379,8 +379,8 @@ app.get('/dots/:scoreId', async (req, res) => {
  *         required: true
  *         description: The score id     
  *     responses:
- *       201:
- *         description: The dots score response with score id
+ *       200:
+ *         description: DOTS score deleted successfully
  */
 app.delete('/dots/:scoreId', async (req, res) => {
   try {
