@@ -27,31 +27,31 @@ erDiagram
         float body_weight
     }
     LIFT_TYPE {
-        uuid id PK
+        BIGINT id PK
         text name
     }
     LIFT {
-        uuid id PK
+        BIGINT id PK
         uuid user_id FK
         float weight_lifted
-        uuid lift_type_id FK
+        BIGINT lift_type_id FK
         date date
         text notes
     }
     DOTS_SCORE {
-        uuid id PK
+        BIGINT id PK
         decimal score
         date date_calculated
         uuid user_id FK
-        uuid bench_lift_id FK
-        uuid squat_lift_id FK
-        uuid deadlift_lift_id FK
+        BIGINT bench_lift_id FK
+        BIGINT squat_lift_id FK
+        BIGINT deadlift_lift_id FK
     }
     DOTS_ASSESSMENT {
         int id PK
         decimal min_score
         decimal max_score
-        varchar label
+        varchar classification
         text description
     }
     DOTS_COEFFICIENTS {
@@ -102,16 +102,16 @@ erDiagram
      ```sql
      CREATE DATABASE your_db_name;
      ```
-   - Run the migration scripts in the `sql/mirgations/` folder to create the necessary tables:
-     ```bash
-     psql -U your_db_user -d your_db_name -f sql/mirgations/create_lift_type_table.sql
-     psql -U your_db_user -d your_db_name -f sql/mirgations/create_app_user_table.sql
-     psql -U your_db_user -d your_db_name -f sql/mirgations/create_lift_table.sql
-     psql -U your_db_user -d your_db_name -f sql/mirgations/create_dots_score_table.sql
-     psql -U your_db_user -d your_db_name -f sql/mirgations/create_dots_coefficients_table.sql
-     psql -U your_db_user -d your_db_name -f sql/mirgations/create_dots_assessment_table.sql
-     ```
-   - (Optional) Seed initial data if needed.
+   - In the psql shell, run the migration scripts in the `sql/migrations/` folder to create the necessary tables:
+    ```bash
+    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_lift_type_table.sql
+    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_app_user_table.sql
+    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_lift_table.sql
+    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_dots_score_table.sql
+    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_dots_coefficients_table.sql
+    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_dots_assessment_table.sql
+    ```
+   - Seeded data is automatically added.
 
 5. **Start the server**
   
