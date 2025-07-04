@@ -98,10 +98,7 @@ erDiagram
 
 4. **Set up the database**
 
-   - Create your database in PostgreSQL if it doesn't exist:
-     ```sql
-     CREATE DATABASE your_db_name;
-     ```
+   - Create your database in PostgreSQL if it doesn't exist
    - In the psql shell, run the migration scripts in the `sql/migrations/` folder to create the necessary tables:
     ```bash
     postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_lift_type_table.sql
@@ -158,7 +155,7 @@ http://localhost:3000/
   {
     "user_id": "uuid",
     "weight_lifted": number,
-    "lift_type_id": "uuid",
+    "lift_type_id": "bigint",
     "date": "YYYY-MM-DD",
     "notes": "optional string"
   }
