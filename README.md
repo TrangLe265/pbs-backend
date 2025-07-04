@@ -116,7 +116,7 @@ erDiagram
 5. **Start the server**
   
    ```bash
-   npx nodemon index.js
+   nodemon start
    ```
 
 6. **Test the API**
