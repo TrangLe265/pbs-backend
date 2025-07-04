@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS dots_score (
-    id uuid DEFAULT gen_random_uuid() PRIMARY KEY, 
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY, 
     score DECIMAL(10,2) NOT NULL,
     date_calculated DATE DEFAULT CURRENT_DATE,
     user_id uuid REFERENCES app_user(id) ON DELETE CASCADE,
