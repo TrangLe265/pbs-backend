@@ -1,9 +1,9 @@
 const { ParameterizedQuery } = require("pg-promise");
 const db = require("../../db.js"); 
 
-const getCoefficientsBySex = async (sex) => {
+const getDataByUserId = async (userId) => {
     try{
-         return await db.query("SELECT a,b,c,d,e FROM dots_coefficients WHERE sex=$1",[sex])
+         return await db.query("SELECT body_weight,sex FROM app_user WHERE id=$1",[userId])
     } catch (err){
         console.error('Error fetching data:', err); 
         throw err;
@@ -11,5 +11,5 @@ const getCoefficientsBySex = async (sex) => {
 }
 
 module.exports = {
-   getCoefficientsBySex
+   getDataByUserId
 }

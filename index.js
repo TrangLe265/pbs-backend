@@ -2,6 +2,7 @@ const Joi = require('joi'); // this class Joi from package Joi is used for data 
 // https://joi.dev/api/?v=17.13.3
 const express = require('express'); 
 const db = require('./db.js'); 
+const userQueries = require('./sql/queries/app_user.js')
 const liftTypeQueries = require('./sql/queries/lift_type.js');
 const liftQueries = require('./sql/queries/lift.js');
 const dotsQueries = require('./sql/queries/dots_score.js');
@@ -10,8 +11,12 @@ const coefficientsQueries = require('./sql/queries/coefficients.js');
 const {seedUserData} = require('./sql/queries/seed_app_user.js'); 
 const {seedLiftData} = require('./sql/queries/seed_lift.js');
 
+const cors = require('cors'); 
+
+
 const app = express(); 
 require('./swagger')(app);
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use(express.json()); 
 
@@ -19,7 +24,7 @@ app.use(express.json());
 const liftSchema = Joi.object({
   user_id: Joi.string().uuid().required(),
   weight_lifted: Joi.number().positive().required(),
-  lift_type_id: Joi.string().uuid().required(),
+  lift_type_id: Joi.number().required(),
   date: Joi.date().required(),
   notes: Joi.string().allow('').optional()
 });
@@ -452,9 +457,70 @@ app.delete('/dots/:scoreId', async (req, res) => {
  *                     deadlift_lift_id:
  *                       type: string
  */
-app.post('/dots', async(req,res) => {
+/*app.post('/dots', async(req,res) => {
   try {
     const { score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body; 
+    await dotsQueries.addScore(score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id); 
+
+    res.status(201).send({
+      message: 'New DOTS score added successfully',
+      dots: { score, bench_lift_id, squat_lift_id, deadlift_lift_id }
+    });
+
+  } catch(err){
+    console.error(err); 
+    res.status(500).send('Internal Server Error')
+  }
+})*/
+app.post('/dots', async(req,res) => {
+  try {
+    const { user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body; 
+
+    const benchQuery = await liftQueries.getWeightLiftedByLiftId(bench_lift_id);
+    const squatQuery = await liftQueries.getWeightLiftedByLiftId(squat_lift_id);
+    const deadliftQuery = await liftQueries.getWeightLiftedByLiftId(deadlift_lift_id);
+
+    if (!benchQuery.rows[0] || !squatQuery.rows[0] || !deadliftQuery.rows[0]) {
+      return res.status(400).json({ message: "One or more lift IDs are invalid." });
+    }
+
+    const benchResult = parseFloat(benchQuery.rows[0].weight_lifted);
+    const squatResult = parseFloat(squatQuery.rows[0].weight_lifted);
+    const deadliftResult = parseFloat(deadliftQuery.rows[0].weight_lifted);
+    const totalWeightLifted = benchResult + squatResult + deadliftResult; 
+
+    const userQuery = await userQueries.getDataByUserId(user_id); 
+    if (!userQuery.rows[0]) {
+      return res.status(400).json({message: "UserId is invalid or missing body_weight/sex"});
+    }
+    const body_weight = parseFloat(userQuery.rows[0].body_weight);
+    const sex = userQuery.rows[0].sex; 
+    const weightLimits = {
+      male: { min: 40, max: 210 },
+      female: { min: 40, max: 150 }
+    };
+    const limits = weightLimits[sex];
+    if (limits && (body_weight < limits.min || body_weight > limits.max)) {
+      return res.status(400).json({ message: "Lifter's bodyweight is not applicable for this formula!" });
+    }
+
+    const coefficientsQuery = await coefficientsQueries.getCoefficientsBySex(sex); 
+    if (!coefficientsQuery.rows[0]){
+      return res.status(400).json({message: "Incorrect format for sex"})
+    } else {
+      console.log(coefficientsQuery.rows[0]);
+      console.log(totalWeightLifted, body_weight) ;
+    }; 
+    const {a,b,c,d,e} = coefficientsQuery.rows[0]; 
+
+    const score = parseFloat(totalWeightLifted * 500 / (
+      a * Math.pow(body_weight, 4) +
+      b * Math.pow(body_weight, 3) +
+      c * Math.pow(body_weight, 2) +
+      d * body_weight +
+      e
+    )).toFixed(2);
+
     await dotsQueries.addScore(score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id); 
 
     res.status(201).send({

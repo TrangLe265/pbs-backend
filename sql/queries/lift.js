@@ -35,7 +35,7 @@ const getLiftByTypeByUserId = async (userId, liftTypeId) => {
 const addLift = async (userId, weightLifted, liftTypeId, date, notes) => {
     try {
         return await db.query(
-            'INSERT INTO lift (id,user_id, weight_lifted, lift_type_id, date, notes) VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)',
+            'INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes) VALUES ($1, $2, $3, $4, $5)',
             [userId, weightLifted, liftTypeId, date, notes]
         );
     } catch (err) {
@@ -67,11 +67,23 @@ const editLiftById = async ( weightLifted, date, notes, liftId) => {
     }
 }
 
+const getWeightLiftedByLiftId = async (liftId) => {
+    try{
+        return await db.query("SELECT weight_lifted FROM lift WHERE id=$1",[liftId])
+    } catch(err){
+        console.error('Error fetching weight lifted with the given id'); 
+        throw err; 
+
+    }
+}
+
+
 module.exports = {
     getAllLift, 
     getLiftByTypeByUserId,  
     getLiftByLiftId, 
     addLift, 
     deleteLiftById, 
-    editLiftById
+    editLiftById, 
+    getWeightLiftedByLiftId 
 }
