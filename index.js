@@ -73,6 +73,60 @@ app.get('/user/:userId', async (req, res) => {
 
 /**
  * @swagger
+ * /user/{userId}:
+ *   put:
+ *     summary: Update user's body weight
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user's UUID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               weight:
+ *                 type: number
+ *             required:
+ *               - weight
+ *     responses:
+ *       200:
+ *         description: User weight updated successfully
+ */
+app.put('/user/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { weight } = req.body;
+
+  if (typeof weight !== 'number' || weight <= 0) {
+    return res.status(400).json({
+      message: "Validation error",
+      details: ["weight must be a positive number"]
+    });
+  }
+
+  try {
+    const result = await userQueries.updateWeightByUserId(userId, weight);
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({
+      message: 'User weight updated successfully',
+      user: result.rows[0]
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+/**
+ * @swagger
  * /lift-type:
  *   get:
  *     summary: Get all available lift types

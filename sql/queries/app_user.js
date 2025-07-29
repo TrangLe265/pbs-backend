@@ -10,6 +10,19 @@ const getDataByUserId = async (userId) => {
     }
 }
 
+const updateWeightByUserId = async (userId, bodyWeight) => {
+    try {
+        return await db.query(
+            "UPDATE app_user SET body_weight = $1 WHERE id = $2 RETURNING id, name, body_weight, sex",
+            [bodyWeight, userId]
+        );
+    } catch (err) {
+        console.error('Error updating user:', err);
+        throw err;
+    }
+}
+
 module.exports = {
-   getDataByUserId
+   getDataByUserId, 
+   updateWeightByUserId
 }
