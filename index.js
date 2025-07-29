@@ -29,6 +29,47 @@ const liftSchema = Joi.object({
   notes: Joi.string().allow('').optional()
 });
 
+/**
+ * @swagger
+ * /user/{userId}:
+ *   get:
+ *     summary: Get user info by user ID
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user's UUID
+ *     responses:
+ *       200:
+ *         description: User info retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 body_weight:
+ *                   type: number
+ *                 sex:
+ *                   type: string
+ *       404:
+ *         description: User not found
+ */
+app.get('/user/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const result = await userQueries.getDataByUserId(userId);
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 /**
  * @swagger
