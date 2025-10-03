@@ -20,13 +20,8 @@ services:
     restart: always
     ports:
       - "3000:3000"
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: mydb
-      PORT: 3000
+    env_file:
+      - .env
     depends_on:
       - db
 
