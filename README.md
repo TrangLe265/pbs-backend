@@ -1,6 +1,6 @@
 # PowerLifting Records Backend
 
-This backend powers a Powerlifting records and calculation frontend application. Built with Node.js, Express, and PostgreSQL, it manages lift data, calculates DOTS scores for fair lifter comparison, and provides a RESTful API for all core features.
+This backend powers a Powerlifting records and calculation frontend application. Built with Node.js, Express, PostgreSQL on Docker, it manages lift data, calculates DOTS scores for fair lifter comparison, and provides a RESTful API for all core features.
 
 DOTS (Dynamic Objective Team Scoring) is a widely used formula in powerlifting to fairly compare lifters of different body weights. By calculating a DOTS score for each lifter, the system enables objective ranking and classification regardless of weight class.
 
@@ -13,7 +13,8 @@ DOTS (Dynamic Objective Team Scoring) is a widely used formula in powerlifting t
 
 ## Prerequisites
 - Node.js (v16 or later)
-- PostgreSQL (v13 or later)
+- Docker
+
 ---
 
 ## Data Model
@@ -89,32 +90,38 @@ erDiagram
 
    Create a `.env` file in the root directory and add your PostgreSQL credentials:
    ```
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   DB_NAME=your_db_name
-   DB_PORT=5432
-   PORT=3000
+    DB_HOST=db
+    DB_PORT=5432
+    DB_USER=your-user-name
+    DB_PASSWORD=your-password
+    DB_NAME=mydb
    ```
 
-4. **Set up the database**
-
-   - Create your database in PostgreSQL if it doesn't exist
-   - In the psql shell, run the migration scripts in the `sql/migrations/` folder to create the necessary tables:
-    ```bash
-    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_lift_type_table.sql
-    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_app_user_table.sql
-    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_lift_table.sql
-    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_dots_score_table.sql
-    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_dots_coefficients_table.sql
-    postgres-# \i /fullpathtoyourlocalfolder/sql/mirgations/create_dots_assessment_table.sql
-    ```
-   - Seeded data is automatically added.
-
-5. **Start the server**
+4. **Start building the backend and database on Docker**
   
    ```bash
-   nodemon start
+   docker compose build
    ```
+  and then 
+   ```bash
+   docker compose up
+   ```
+  once all the container is ready, you can start running the seeding script in the commandline
+   ```bash
+   docker exec -it my_backend node sql/seeds/run_seeds.js 
+   ```
+  - note that 'my_backend' is the predefined database container name from the file docker-compose.yml
+
+5. **Connect to the database**
+
+  - in a terminal, run the following command to access the database on Docker: 
+  ```bash
+  docker exec -it my_postgres  psql -U <user-name> -d <db-name> 
+  ```
+  - note that 'my_postgres' is the predefined database container name from the file docker-compose.yml
+  - once you see the tag 'database_name=#', you have successfully login in 
+  - write regular SQL script to explore the db
+
 
 6. **Test the API**
    - The server will run at [http://localhost:3000/](http://localhost:3000/)
