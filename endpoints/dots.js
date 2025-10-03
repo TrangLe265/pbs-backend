@@ -5,12 +5,24 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
 
 
     /**
-     * @swagger
-     * /dots/{scoreId}:
-     *   get:
-     *     summary: Get user info by user ID
-     *     tags: [User]
-     */
+ * @swagger
+ * /dots/{scoreId}:
+ *   get:
+ *     summary: Get DOTS score by score ID
+ *     tags: [DOTS scores]
+ *     parameters:
+ *       - in: path
+ *         name: scoreId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The DOTS score ID
+ *     responses:
+ *       200:
+ *         description: DOTS score retrieved successfully
+ *       404:
+ *         description: Score not found
+ */
     const getScoreById = async (req, res) => {
       try {
         const { scoreId } = req.params;
@@ -25,13 +37,23 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
       }
     };
 
-  /**
-   * @swagger
-   * /dots/user/{userId}:
-   *   get:
-   *     summary: Get all DOTS scores by userId
-   *     tags: [DOTS scores]
-   */
+ /**
+ * @swagger
+ * /dots/user/{userId}:
+ *   get:
+ *     summary: Get all DOTS scores by userId
+ *     tags: [DOTS scores]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user's UUID
+ *     responses:
+ *       200:
+ *         description: List of DOTS scores for the user
+ */
   const getAllScore =  async (req,res) => {
     try {
       const { userId } = req.params;
@@ -44,12 +66,37 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
   };
 
   /**
-   * @swagger
-   * /dots:
-   *   post:
-   *     summary: Add a new DOTS score
-   *     tags: [DOTS scores]
-   */
+ * @swagger
+ * /dots:
+ *   post:
+ *     summary: Add a new DOTS score
+ *     tags: [DOTS scores]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: string
+ *               bench_lift_id:
+ *                 type: integer
+ *               squat_lift_id:
+ *                 type: integer
+ *               deadlift_lift_id:
+ *                 type: integer
+ *             required:
+ *               - user_id
+ *               - bench_lift_id
+ *               - squat_lift_id
+ *               - deadlift_lift_id
+ *     responses:
+ *       201:
+ *         description: DOTS score added
+ *       400:
+ *         description: Invalid input
+ */
   const addScore = async (req,res) => {
     try {
       const { user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body;

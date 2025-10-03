@@ -6,7 +6,31 @@ const userQueries = require('../sql/queries/app_user.js');
  *   get:
  *     summary: Get user info by user ID
  *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user's UUID
+ *     responses:
+ *       200:
+ *         description: User info retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                 body_weight:
+ *                   type: number
+ *                 sex:
+ *                   type: string
+ *       404:
+ *         description: User not found
  */
+
 const getUserById = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -27,6 +51,47 @@ const getUserById = async (req, res) => {
  *   put:
  *     summary: Update user's body weight
  *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user's UUID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               weight:
+ *                 type: number
+ *             required:
+ *               - weight
+ *     responses:
+ *       200:
+ *         description: User weight updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     body_weight:
+ *                       type: number
+ *                     sex:
+ *                      type: string
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: User not found
  */
 const updateUserWeight = async (req, res) => {
   const { userId } = req.params;

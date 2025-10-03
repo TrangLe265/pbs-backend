@@ -10,12 +10,22 @@ const liftSchema = Joi.object({
 });
 
   /**
-   * @swagger
-   * /lift/{liftId}:
-   *   get:
-   *     summary: Get a specific lift by ID
-   *     tags: [Lifts]
-   */
+ * @swagger
+ * /lift/{liftId}:
+ *   get:
+ *     summary: Get a specific lift by ID
+ *     tags: [Lifts]
+ *     parameters:
+ *       - in: path
+ *         name: liftId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The lift's ID
+ *     responses:
+ *       200:
+ *         description: Lift retrieved successfully
+ */
     const getLiftByLiftId = async (req,res) => {
         try {
             const { liftId } = req.params;
@@ -27,6 +37,29 @@ const liftSchema = Joi.object({
         }
   };
 
+  /**
+ * @swagger
+ * /lift/{liftTypeId}/{userId}:
+ *   get:
+ *     summary: Get all lifts of a specific type by a user
+ *     tags: [Lifts]
+ *     parameters:
+ *       - in: path
+ *         name: liftTypeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The lift type's ID
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user's UUID
+ *     responses:
+ *       200:
+ *         description: List of lifts for the user and type
+ */
   const getLiftByTypeByUserId = async (req,res) => {
     try {
         const {userId, liftTypeId} = req.params; 
@@ -40,12 +73,40 @@ const liftSchema = Joi.object({
   }
 
   /**
-   * @swagger
-   * /lift:
-   *   post:
-   *     summary: Create a new lift
-   *     tags: [Lifts]
-   */
+ * @swagger
+ * /lift:
+ *   post:
+ *     summary: Create a new lift
+ *     tags: [Lifts]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: string
+ *               weight_lifted:
+ *                 type: number
+ *               lift_type_id:
+ *                 type: integer
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               notes:
+ *                 type: string
+ *             required:
+ *               - user_id
+ *               - weight_lifted
+ *               - lift_type_id
+ *               - date
+ *     responses:
+ *       201:
+ *         description: Lift added successfully
+ *       400:
+ *         description: Validation error
+ */
   const addLift =  async (req, res) => {
     const { error, value } = liftSchema.validate(req.body, { abortEarly: false });
     if (error) {
@@ -68,13 +129,42 @@ const liftSchema = Joi.object({
     }
   };
 
-  /**
-   * @swagger
-   * /lift/{liftId}:
-   *   put:
-   *     summary: Update a lift by ID
-   *     tags: [Lifts]
-   */
+ /**
+ * @swagger
+ * /lift/{liftId}:
+ *   put:
+ *     summary: Update a lift by ID
+ *     tags: [Lifts]
+ *     parameters:
+ *       - in: path
+ *         name: liftId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The lift's ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               weight_lifted:
+ *                 type: number
+ *               date:
+ *                 type: string
+ *                 format: date
+ *               notes:
+ *                 type: string
+ *             required:
+ *               - weight_lifted
+ *               - date
+ *     responses:
+ *       200:
+ *         description: Lift edited successfully
+ *       400:
+ *         description: Validation error
+ */
   const editLiftById = async (req,res) => {
     const { error } = liftSchema.validate(req.body, { abortEarly: false });
     if (error) {
@@ -96,12 +186,22 @@ const liftSchema = Joi.object({
   };
 
   /**
-   * @swagger
-   * /lift/{liftId}:
-   *   delete:
-   *     summary: Delete a lift by ID
-   *     tags: [Lifts]
-   */
+ * @swagger
+ * /lift/{liftId}:
+ *   delete:
+ *     summary: Delete a lift by ID
+ *     tags: [Lifts]
+ *     parameters:
+ *       - in: path
+ *         name: liftId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The lift's ID
+ *     responses:
+ *       200:
+ *         description: Lift deleted successfully
+ */
   const deleteLiftById = async (req,res) => {
     try {
       const { liftId } = req.params;

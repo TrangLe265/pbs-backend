@@ -2,12 +2,22 @@ const dotsAssessmentQueries = require('../sql/queries/dots_assessment.js');
 
 
   /**
-   * @swagger
-   * /classification:
-   *   get:
-   *     summary: Get all DOTS classifications
-   *     tags: [DOTS classifications]
-   */
+ * @swagger
+ * /classification/score/{score}:
+ *   get:
+ *     summary: Get classification for a score
+ *     tags: [DOTS classifications]
+ *     parameters:
+ *       - in: path
+ *         name: score
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: The DOTS score to classify
+ *     responses:
+ *       200:
+ *         description: Classification result
+ */
   const getAllClassifications = async (req,res) => {
     try {
       const result = await dotsAssessmentQueries.getAllClassifications();
@@ -19,12 +29,39 @@ const dotsAssessmentQueries = require('../sql/queries/dots_assessment.js');
   };
 
   /**
-   * @swagger
-   * /classification/score/{score}:
-   *   get:
-   *     summary: Get classification for a score
-   *     tags: [DOTS classifications]
-   */
+ * @swagger
+ * /classification/score/{score}:
+ *   get:
+ *     summary: Get classification for a score
+ *     tags: [DOTS classifications]
+ *     parameters:
+ *       - in: path
+ *         name: score
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: The DOTS score to classify
+ *     responses:
+ *       200:
+ *         description: Classification result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   min_score:
+ *                     type: number
+ *                   max_score:
+ *                     type: number
+ *                   classification:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ */
   const getClassificationByScore = async (req,res) => {
     try {
       const score = Number(req.params.score);
