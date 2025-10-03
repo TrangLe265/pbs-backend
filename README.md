@@ -225,6 +225,6 @@ http://localhost:3000/
 ## Notes
 
 - All endpoints return JSON.
-- Ensure your database is set up and migrations are run before starting the server.
+- Ensure you have backend and database built on Docker before accessing BaseURL.
 
 ---
