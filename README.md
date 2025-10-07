@@ -1,17 +1,23 @@
 # PowerLifting Records Backend
 
-This backend powers a Powerlifting records and calculation frontend application. Built with Node.js, Express, PostgreSQL on Docker, it manages lift data, calculates DOTS scores for fair lifter comparison, and provides a RESTful API for all core features.
+A backend service for managing powerlifting records and calculations. Built with **Node.js**, **Express**, and **PostgreSQL** (on Docker), it manages lift data, calculates DOTS scores for fair lifter comparison, and provides a RESTful API.
 
-DOTS (Dynamic Objective Team Scoring) is a widely used formula in powerlifting to fairly compare lifters of different body weights. By calculating a DOTS score for each lifter, the system enables objective ranking and classification regardless of weight class.
+> **DOTS (Dynamic Objective Team Scoring)** is a widely used formula in powerlifting to compare lifters of different body weights. By calculating a DOTS score for each lifter, the system enables objective ranking and classification regardless of weight class.
+
+---
 
 ## Features
+
 - Manage lift types (e.g., squat, bench, deadlift)
 - Record user lifts and calculate DOTS scores
 - DOTS score classification and coefficient endpoints
-- RESTful API endpoints for interacting with the database
+- RESTful API endpoints for all core features
 - API documentation with Swagger
 
+---
+
 ## Prerequisites
+
 - Node.js (v16 or later)
 - Docker
 
@@ -21,122 +27,112 @@ DOTS (Dynamic Objective Team Scoring) is a widely used formula in powerlifting t
 
 ```mermaid
 erDiagram
-    APP_USER {
-        uuid id PK
-        text name
-        text sex
-        float body_weight
-    }
-    LIFT_TYPE {
-        BIGINT id PK
-        text name
-    }
-    LIFT {
-        BIGINT id PK
-        uuid user_id FK
-        float weight_lifted
-        BIGINT lift_type_id FK
-        date date
-        text notes
-    }
-    DOTS_SCORE {
-        BIGINT id PK
-        decimal score
-        date date_calculated
-        uuid user_id FK
-        BIGINT bench_lift_id FK
-        BIGINT squat_lift_id FK
-        BIGINT deadlift_lift_id FK
-    }
-    DOTS_ASSESSMENT {
-        int id PK
-        decimal min_score
-        decimal max_score
-        varchar classification
-        text description
-    }
-    DOTS_COEFFICIENTS {
-        int id PK
-        varchar sex
-        double a
-        double b
-        double c
-        double d
-        double e
-    }
+  APP_USER {
+    uuid id PK
+    text name
+    text sex
+    float body_weight
+  }
+  LIFT_TYPE {
+    BIGINT id PK
+    text name
+  }
+  LIFT {
+    BIGINT id PK
+    uuid user_id FK
+    float weight_lifted
+    BIGINT lift_type_id FK
+    date date
+    text notes
+  }
+  DOTS_SCORE {
+    BIGINT id PK
+    decimal score
+    date date_calculated
+    uuid user_id FK
+    BIGINT bench_lift_id FK
+    BIGINT squat_lift_id FK
+    BIGINT deadlift_lift_id FK
+  }
+  DOTS_ASSESSMENT {
+    int id PK
+    decimal min_score
+    decimal max_score
+    varchar classification
+    text description
+  }
+  DOTS_COEFFICIENTS {
+    int id PK
+    varchar sex
+    double a
+    double b
+    double c
+    double d
+    double e
+  }
 
-    APP_USER ||--o{ LIFT : "has"
-    LIFT_TYPE ||--o{ LIFT : "is type"
-    APP_USER ||--o{ DOTS_SCORE : "has"
-    LIFT ||--o{ DOTS_SCORE : "bench/squat/deadlift"
+  APP_USER ||--o{ LIFT : "has"
+  LIFT_TYPE ||--o{ LIFT : "is type"
+  APP_USER ||--o{ DOTS_SCORE : "has"
+  LIFT ||--o{ DOTS_SCORE : "bench/squat/deadlift"
 ```
 
 ---
 
-## Set Up Instructions
+## Setup Instructions
 
 1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd my-pbs-backend
-   ```
+  ```bash
+  git clone <your-repo-url>
+  cd my-pbs-backend
+  ```
 
 2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+  ```bash
+  npm install
+  ```
 
 3. **Configure environment variables**
 
-   Create a `.env` file in the root directory and add your PostgreSQL credentials:
-   ```
-    DB_HOST=db
-    DB_PORT=5432
-    DB_USER=your-user-name
-    DB_PASSWORD=your-password
-    DB_NAME=mydb
-   ```
+  Create a `.env` file in the root directory:
+  ```
+  DB_HOST=db
+  DB_PORT=5432
+  DB_USER=your-user-name
+  DB_PASSWORD=your-password
+  DB_NAME=mydb
+  ```
 
-4. **Start building the backend and database on Docker**
-  
-   ```bash
-   docker compose build
-   ```
-  and then 
-   ```bash
-   docker compose up
-   ```
-  once all the container is ready, you can start running the seeding script in the commandline
-  seeding is optional
-   ```bash
-   docker exec -it my_backend node sql/seeds/run_seeds.js 
-   ```
-  - note that 'my_backend' is the predefined database container name from the file docker-compose.yml
+4. **Build and start the backend and database with Docker**
+  ```bash
+  docker compose build
+  docker compose up
+  ```
+  Once containers are ready, you can (optionally) seed the database:
+  ```bash
+  docker exec -it my_backend node sql/seeds/run_seeds.js
+  ```
+  > `'my_backend'` is the backend container name from `docker-compose.yml`.
 
 5. **Connect to the database**
-
-  - in a terminal, run the following command to access the database on Docker: 
   ```bash
-  docker exec -it my_postgres  psql -U <user-name> -d <db-name> 
+  docker exec -it my_postgres psql -U <user-name> -d <db-name>
   ```
-  - note that 'my_postgres' is the predefined database container name from the file docker-compose.yml
-  - once you see the tag 'database_name=#', you have successfully login in 
-  - write regular SQL script to explore the db
-
+  > `'my_postgres'` is the database container name from `docker-compose.yml`.
 
 6. **Test the API**
-   - The server will run at [http://localhost:3000/](http://localhost:3000/)
-   - Use Postman, curl, or your frontend to interact with the endpoints.
+  - Server runs at [http://localhost:3000/](http://localhost:3000/)
+  - Use Postman, curl, or your frontend to interact with endpoints.
 
-6. **Test the SQL queries**
-   - The test run automatically when docker is up
-   - Run it seperately by running 
+7. **Run SQL or API tests**
+  - Tests run automatically when Docker is up.
+  - To run a specific test file:
     ```bash
-      docker exec -it my_backend npx jest test/test-file-name.test.js
+    docker exec -it my_backend npx jest test/test-file-name.test.js
     ```
-   
+
 8. **API documentation**
-   - API documentation can be found at [http://localhost:3000/api-docs/#/](http://localhost:3000/api-docs/#/)
+  - Available at [http://localhost:3000/api-docs/#/](http://localhost:3000/api-docs/#/)
 
 ---
 
@@ -150,13 +146,15 @@ http://localhost:3000/
 
 ## Endpoints
 
-### **Lift Types**
+### Lift Types
+
 - **GET `/lift-type`**  
   Get all available lift types.
 
 ---
 
-### **Lifts**
+### Lifts
+
 - **GET `/lift/user/:userId/:liftTypeId`**  
   Get all lifts of a specific type for a user.
 
@@ -168,11 +166,11 @@ http://localhost:3000/
   **Body:**
   ```json
   {
-    "user_id": "uuid",
-    "weight_lifted": number,
-    "lift_type_id": "bigint",
-    "date": "YYYY-MM-DD",
-    "notes": "optional string"
+  "user_id": "uuid",
+  "weight_lifted": number,
+  "lift_type_id": "bigint",
+  "date": "YYYY-MM-DD",
+  "notes": "optional string"
   }
   ```
 
@@ -185,7 +183,8 @@ http://localhost:3000/
 
 ---
 
-### **DOTS Scores**
+### DOTS Scores
+
 - **GET `/dots/user/:userId`**  
   Get all DOTS scores for a user.
 
@@ -197,11 +196,11 @@ http://localhost:3000/
   **Body:**
   ```json
   {
-    "score": number,
-    "user_id": "uuid",
-    "bench_lift_id": "uuid",
-    "squat_lift_id": "uuid",
-    "deadlift_lift_id": "uuid"
+  "score": number,
+  "user_id": "uuid",
+  "bench_lift_id": "uuid",
+  "squat_lift_id": "uuid",
+  "deadlift_lift_id": "uuid"
   }
   ```
 
@@ -210,7 +209,8 @@ http://localhost:3000/
 
 ---
 
-### **DOTS Classifications**
+### DOTS Classifications
+
 - **GET `/classification`**  
   Get all DOTS score classifications.
 
@@ -219,7 +219,8 @@ http://localhost:3000/
 
 ---
 
-### **DOTS Coefficients**
+### DOTS Coefficients
+
 - **GET `/coefficients/:sex`**  
   Get DOTS calculation coefficients for a given sex (`male` or `female`).
 
@@ -227,12 +228,12 @@ http://localhost:3000/
 
 ## Validation
 
-- POST and PUT endpoints for adding or editing lifts use server-side validation (Joi) to ensure data integrity.
+- POST and PUT endpoints for lifts use server-side validation (Joi) to ensure data integrity.
 
 ---
+
 ## Notes
 
 - All endpoints return JSON.
-- Ensure you have backend and database built on Docker before accessing BaseURL.
+- Ensure backend and database are running on Docker before accessing the API.
 
----
