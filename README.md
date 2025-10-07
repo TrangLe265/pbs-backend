@@ -126,8 +126,17 @@ erDiagram
 6. **Test the API**
    - The server will run at [http://localhost:3000/](http://localhost:3000/)
    - Use Postman, curl, or your frontend to interact with the endpoints.
+   - docker exec -it my_backend npx jest test/app_user.test.js
 
-7. **API documentation**
+6. **Test the SQL queries**
+   - The test run automatically when docker is up
+   - Run it seperately by running 
+    ```bash
+      docker exec -it my_backend npx jest test/test-file-name.test.js
+    ```
+   
+
+8. **API documentation**
    - API documentation can be found at [http://localhost:3000/api-docs/#/](http://localhost:3000/api-docs/#/)
 
 ---
