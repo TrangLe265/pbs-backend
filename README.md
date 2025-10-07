@@ -107,6 +107,7 @@ erDiagram
    docker compose up
    ```
   once all the container is ready, you can start running the seeding script in the commandline
+  seeding is optional
    ```bash
    docker exec -it my_backend node sql/seeds/run_seeds.js 
    ```
@@ -126,7 +127,6 @@ erDiagram
 6. **Test the API**
    - The server will run at [http://localhost:3000/](http://localhost:3000/)
    - Use Postman, curl, or your frontend to interact with the endpoints.
-   - docker exec -it my_backend npx jest test/app_user.test.js
 
 6. **Test the SQL queries**
    - The test run automatically when docker is up
@@ -135,7 +135,6 @@ erDiagram
       docker exec -it my_backend npx jest test/test-file-name.test.js
     ```
    
-
 8. **API documentation**
    - API documentation can be found at [http://localhost:3000/api-docs/#/](http://localhost:3000/api-docs/#/)
 
