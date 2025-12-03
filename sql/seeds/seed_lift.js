@@ -4,7 +4,7 @@ const seedLiftData = async () => {
     try {
         const userResult = await db.query("SELECT id FROM app_user WHERE name='John Doe'");
         if (!userResult.rows || userResult.rows.length === 0) {
-            throw new Error('Required FK value not found in app_user');
+            throw new Error('User John Doe not found in app_user');
         }
         const userId = userResult.rows[0].id;
 

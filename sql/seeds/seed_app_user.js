@@ -9,9 +9,9 @@ const seedUserData = async () => {
             console.log('Users data already exist, skip seeding'); 
         } else {
             await db.query(`
-                INSERT INTO app_user (id, name, sex, body_weight)
+                INSERT INTO app_user (name, sex, body_weight)
                 VALUES 
-                (gen_random_uuid(), 'John Doe', 'male', 90.5)
+                ('John Doe', 'male', 90.5)
                 ON CONFLICT (id) DO NOTHING;
             `); 
             console.log('Seeding app_user completed successfully'); 
