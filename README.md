@@ -108,9 +108,20 @@ erDiagram
   docker compose build
   docker compose up
   ```
+  If you encounter a problem, and would wish to build backend and database with a clean slate, run:
+  ```bash
+    #Stop the current running docker
+    docker compose down
+    #Remove all data in database 
+    docker volume rm yourDockerContainerName_pgdata
+    #Rebuild backend, database and test on docker with new changes
+    docker compose build
+    #Start docker 
+    docker compose up
+  ```
   Once containers are ready, you can (optionally) seed the database:
   ```bash
-  docker exec -it my_backend node sql/seeds/run_seeds.js
+  npm run seed 
   ```
   > `'my_backend'` is the backend container name from `docker-compose.yml`.
 
@@ -121,6 +132,7 @@ erDiagram
   > `'my_postgres'` is the database container name from `docker-compose.yml`.
 
 6. **Test the API**
+ Make sure docker is running
   - Server runs at [http://localhost:3000/](http://localhost:3000/)
   - Use Postman, curl, or your frontend to interact with endpoints.
 
