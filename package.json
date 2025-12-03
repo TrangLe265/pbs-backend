@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "seed": "node sql/seeds/run_seeds.js",
+    "seed": "docker exec -it my_backend node sql/seeds/run_seeds.js",
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
