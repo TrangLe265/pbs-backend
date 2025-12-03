@@ -18,7 +18,7 @@ describe('lifts queries', () => {
 
         // Insert a test user
         const resUser = await db.query(
-          "INSERT INTO app_user (id, name, sex, body_weight) VALUES (gen_random_uuid(), 'Test User', 'male', 80.0) RETURNING id"
+          "INSERT INTO app_user ( name, sex, body_weight) VALUES ( 'Test User', 'male', 80.0) RETURNING id"
         );
         testUserId = resUser.rows[0].id;
 
