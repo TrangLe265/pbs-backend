@@ -2,9 +2,9 @@ const liftQueries = require('../sql/queries/lift.js');
 const Joi = require('joi');
 
 const liftSchema = Joi.object({
-  user_id: Joi.string().uuid().required(),
+  user_id: Joi.number().integer().required(),
   weight_lifted: Joi.number().positive().required(),
-  lift_type_id: Joi.number().required(),
+  lift_type_id: Joi.number().integer().required(),
   date: Joi.date().required(),
   notes: Joi.string().allow('').optional()
 });
@@ -54,8 +54,8 @@ const liftSchema = Joi.object({
  *         name: userId
  *         required: true
  *         schema:
- *           type: string
- *         description: The user's UUID
+ *           type: integer
+ *         description: The user's ID
  *     responses:
  *       200:
  *         description: List of lifts for the user and type
@@ -86,7 +86,7 @@ const liftSchema = Joi.object({
  *             type: object
  *             properties:
  *               user_id:
- *                 type: string
+ *                 type: integer
  *               weight_lifted:
  *                 type: number
  *               lift_type_id:

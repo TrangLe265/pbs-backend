@@ -11,8 +11,8 @@ const userQueries = require('../sql/queries/app_user.js');
  *         name: userId
  *         required: true
  *         schema:
- *           type: string
- *         description: The user's UUID
+ *           type: integer
+ *         description: The user's ID
  *     responses:
  *       200:
  *         description: User info retrieved successfully
@@ -56,8 +56,8 @@ const getUserById = async (req, res) => {
  *         name: userId
  *         required: true
  *         schema:
- *           type: string
- *         description: The user's UUID
+ *           type: integer
+ *         description: The user's ID
  *     requestBody:
  *       required: true
  *       content:

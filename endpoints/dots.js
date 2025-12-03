@@ -15,7 +15,7 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
  *         name: scoreId
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *         description: The DOTS score ID
  *     responses:
  *       200:
@@ -48,8 +48,8 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
  *         name: userId
  *         required: true
  *         schema:
- *           type: string
- *         description: The user's UUID
+ *           type: integer
+ *         description: The user's id
  *     responses:
  *       200:
  *         description: List of DOTS scores for the user
@@ -79,7 +79,7 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
  *             type: object
  *             properties:
  *               user_id:
- *                 type: string
+ *                 type: integer
  *               bench_lift_id:
  *                 type: integer
  *               squat_lift_id:

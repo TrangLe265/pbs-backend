@@ -3,20 +3,13 @@ const dotsAssessmentQueries = require('../sql/queries/dots_assessment.js');
 
   /**
  * @swagger
- * /classification/score/{score}:
+ * /classification:
  *   get:
- *     summary: Get classification for a score
+ *     summary: Get all classifications
  *     tags: [DOTS classifications]
- *     parameters:
- *       - in: path
- *         name: score
- *         required: true
- *         schema:
- *           type: number
- *         description: The DOTS score to classify
  *     responses:
  *       200:
- *         description: Classification result
+ *         description: All classifications retrieved successfully
  */
   const getAllClassifications = async (req,res) => {
     try {
@@ -39,7 +32,7 @@ const dotsAssessmentQueries = require('../sql/queries/dots_assessment.js');
  *         name: score
  *         required: true
  *         schema:
- *           type: number
+ *           type: integer
  *         description: The DOTS score to classify
  *     responses:
  *       200:
