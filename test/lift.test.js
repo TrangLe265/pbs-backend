@@ -12,7 +12,7 @@ describe('lifts queries', () => {
           ); 
 
          if (!res.rows.length) {
-            throw new Error("No lift_type found with name 'squat'");
+            throw new Error("No lift_type found with name 'bench'");
           }
           liftTypeId = res.rows[0].id;
 
@@ -40,4 +40,56 @@ describe('lifts queries', () => {
         expect (Number(result.rows[0].weight_lifted)).toBeCloseTo(200); 
         expect(result.rows[0].notes).toBe('test');  
     })
-})
+
+    test('getLiftByTypeByUserId returns lifts of specific type for user', async () => {
+        const result = await getLiftByTypeByUserId(testUserId, liftTypeId); 
+        expect(result.rows.length).toBeGreaterThan(0); 
+        expect(result.rows[0].lift_type_id).toBe(liftTypeId); 
+    })
+
+    test('addLift adds a new lift', async () => {
+        const newLift = {
+          user_id: testUserId,
+          weight_lifted: 250,
+          lift_type_id: liftTypeId,
+          date: '2025-02-02',
+          notes: 'new lift test'
+        };
+        const result = await addLift(newLift); 
+        expect(result.rows[0].weight_lifted).toBeCloseTo(250); 
+        expect(result.rows[0].notes).toBe('new lift test'); 
+
+        // Clean up
+        await db.query("DELETE FROM lift WHERE id = $1", [result.rows[0].id]);
+    })
+
+    test('deleteLiftById removes the correctlift', async () => {
+        const newLift = {
+          user_id: testUserId,
+          weight_lifted: 300,
+          lift_type_id: liftTypeId,
+          date: '2025-03-03',
+          notes: 'delete lift test'
+        };
+        const addedLift = await addLift(newLift); 
+        const liftIdToDelete = addedLift.rows[0].id;
+
+        await deleteLiftById(liftIdToDelete); 
+        const result = await getLiftByLiftId(liftIdToDelete); 
+        expect(result.rows.length).toBe(0); 
+    })
+
+    test('editLiftById updates the lift details', async () => {
+        const updatedData = {
+          weight_lifted: 220,
+          date: '2025-01-05',
+          notes: 'updated notes',
+          liftId: testLiftId
+        };
+        await editLiftById(updatedData); 
+        const result = await getLiftByLiftId(testLiftId); 
+        expect(Number(result.rows[0].weight_lifted)).toBeCloseTo(220); 
+        expect(result.rows[0].notes).toBe('updated notes'); 
+    })  
+      
+});
