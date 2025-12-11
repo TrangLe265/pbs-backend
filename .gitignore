@@ -1,2 +1,6 @@
 node_modules/
 .env
+docker-compose.yml
+dist/
+.DS_Store
+.vscode/
