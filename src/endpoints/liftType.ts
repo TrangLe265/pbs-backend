@@ -1,4 +1,5 @@
-const liftTypeQueries = require('../sql/queries/lift_type.js');
+import * as liftTypeQueries from '../sql/queries/lift_type';
+import { Request, Response, Application } from "express";
 
 /**
  * @swagger
@@ -21,7 +22,7 @@ const liftTypeQueries = require('../sql/queries/lift_type.js');
  *                   name:
  *                     type: string
  */
-const getAllLiftTypes = async (req,res) => {
+const getAllLiftTypes = async (req: Request, res: Response) => {
     try {
       const result = await liftTypeQueries.getAllLiftTypes();
       res.json(result.rows);
@@ -31,6 +32,6 @@ const getAllLiftTypes = async (req,res) => {
     }
 }; 
 
-module.exports = (app) => {
+export default function liftTypeRoute(app: Application): void {
     app.get('/lift-type', getAllLiftTypes);
 }; 

@@ -1,14 +1,14 @@
-const db = require("../../db.js");
+import pool from '../../db';
 
-const seedUserData = async () => {
+export default async function seedUserData() {
     try {
-        const result = await db.query('SELECT COUNT(*) FROM app_user'); 
+        const result = await pool.query('SELECT COUNT(*) FROM app_user'); 
         const userCount = parseInt(result.rows[0].count); 
         
         if (userCount > 0){
             console.log('Users data already exist, skip seeding'); 
         } else {
-            await db.query(`
+            await pool.query(`
                 INSERT INTO app_user (name, sex, body_weight)
                 VALUES 
                 ('John Doe', 'male', 90.5)
@@ -22,5 +22,3 @@ const seedUserData = async () => {
         console.log('Error while seeding app_user: ', err); 
     } 
 }; 
-
-module.exports = {seedUserData}; 

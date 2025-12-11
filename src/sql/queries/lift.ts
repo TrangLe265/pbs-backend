@@ -1,11 +1,10 @@
-const { ParameterizedQuery } = require("pg-promise");
-const db = require("../../db.js"); 
+import pool from '../../db';
 
 //get all lifts of all users
 //TODO: REMOVE THIS ENDPOINT AFTER TESTING ALL DONE
-const getAllLift = async () => {
+export async function getAllLift() {
     try {
-        return await db.query('SELECT * FROM lift');
+        return await pool.query('SELECT * FROM lift');
     } catch (err) {
         console.error('Error fetching all lifts:', err);
         throw err; 
@@ -13,9 +12,9 @@ const getAllLift = async () => {
 };
 
 //get a specific lift by its id
-const getLiftByLiftId = async (param) => {
+export async function getLiftByLiftId(param) {
     try {
-        return await db.query('SELECT * FROM lift WHERE id = $1', [param]);
+        return await pool.query('SELECT * FROM lift WHERE id = $1', [param]);
     } catch (err) {
         console.error(`Error fetching lift by id (${param}):`, err);
         throw err;
@@ -23,18 +22,18 @@ const getLiftByLiftId = async (param) => {
 };
 
 //get all lifts of a specific typer by an user 
-const getLiftByTypeByUserId = async (userId, liftTypeId) => {
+export async function getLiftByTypeByUserId(userId, liftTypeId) {
     try {
-        return await db.query('SELECT * FROM lift WHERE user_id = $1 AND lift_type_id = $2', [userId, liftTypeId]);
+        return await pool.query('SELECT * FROM lift WHERE user_id = $1 AND lift_type_id = $2', [userId, liftTypeId]);
     } catch (err) {
         console.error(`Error fetching lifts by userId (${userId}) and liftType (${liftTypeId}):`, err);
         throw err;
     }
 };
 
-const addLift = async (userId, weightLifted, liftTypeId, date, notes) => {
+export async function addLift(userId, weightLifted, liftTypeId, date, notes) {
     try {
-        return await db.query(
+        return await pool.query(
             'INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes) VALUES ($1, $2, $3, $4, $5)',
             [userId, weightLifted, liftTypeId, date, notes]
         );
@@ -47,9 +46,9 @@ const addLift = async (userId, weightLifted, liftTypeId, date, notes) => {
     }
 };
 
-const deleteLiftById = async (liftId) => {
+export async function deleteLiftById(liftId)  {
     try {
-        return await db.query("DELETE FROM lift WHERE id = $1",[liftId]); 
+        return await pool.query("DELETE FROM lift WHERE id = $1",[liftId]); 
 
     } catch (err){
         console.error(`Error deleting lift with id ${liftId}`);
@@ -57,9 +56,9 @@ const deleteLiftById = async (liftId) => {
     }
 }
 
-const editLiftById = async ( weightLifted, date, notes, liftId) => {
+export async function editLiftById(weightLifted, date, notes, liftId) {
     try {
-        return await db.query("UPDATE lift SET weight_lifted = $1, date = $2, notes = $3 WHERE id = $4",[weightLifted, date, notes, liftId])
+        return await pool.query("UPDATE lift SET weight_lifted = $1, date = $2, notes = $3 WHERE id = $4",[weightLifted, date, notes, liftId])
 
     } catch (err){
         console.error(`Error editing lift with id ${liftId}`);
@@ -67,23 +66,12 @@ const editLiftById = async ( weightLifted, date, notes, liftId) => {
     }
 }
 
-const getWeightLiftedByLiftId = async (liftId) => {
+export async function getWeightLiftedByLiftId(liftId) {
     try{
-        return await db.query("SELECT weight_lifted FROM lift WHERE id=$1",[liftId])
+        return await pool.query("SELECT weight_lifted FROM lift WHERE id=$1",[liftId])
     } catch(err){
         console.error('Error fetching weight lifted with the given id'); 
         throw err; 
 
     }
-}
-
-
-module.exports = {
-    getAllLift, 
-    getLiftByTypeByUserId,  
-    getLiftByLiftId, 
-    addLift, 
-    deleteLiftById, 
-    editLiftById, 
-    getWeightLiftedByLiftId 
 }

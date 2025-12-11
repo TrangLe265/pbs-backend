@@ -1,5 +1,5 @@
-const { seedUserData } = require('./seed_app_user');
-const { seedLiftData } = require('./seed_lift');
+import  seedUserData from './seed_app_user';
+import  seedLiftData from './seed_lift';
 
 const runSeeds = async () => {
   try {

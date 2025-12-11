@@ -2,12 +2,13 @@
   "name": "my-pbs-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest",
-    "seed": "docker exec -it my_backend node sql/seeds/run_seeds.js",
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "seed": "docker exec -it my_backend node dist/sql/seeds/run_seeds.js",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -16,7 +17,6 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "joi": "^17.13.3",
-    "nodemon": "^3.1.9",
     "pg-promise": "^11.13.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
@@ -27,6 +27,8 @@
     "@types/node": "^24.10.2",
     "jest": "^30.2.0",
     "node-pg-migrate": "^8.0.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "nodemon": "^3.0.1", 
+    "ts-node-dev": "^2.0.0"
   }
 }

@@ -1,5 +1,5 @@
-const dotsAssessmentQueries = require('../sql/queries/dots_assessment.js');
-
+import * as dotsAssessmentQueries from '../sql/queries/dots_assessment';
+import { Request, Response, Application } from "express";
 
   /**
  * @swagger
@@ -11,7 +11,7 @@ const dotsAssessmentQueries = require('../sql/queries/dots_assessment.js');
  *       200:
  *         description: All classifications retrieved successfully
  */
-  const getAllClassifications = async (req,res) => {
+  const getAllClassifications = async (req: Request, res: Response) => {
     try {
       const result = await dotsAssessmentQueries.getAllClassifications();
       res.json(result.rows);
@@ -55,7 +55,7 @@ const dotsAssessmentQueries = require('../sql/queries/dots_assessment.js');
  *                   description:
  *                     type: string
  */
-  const getClassificationByScore = async (req,res) => {
+  const getClassificationByScore = async (req: Request, res: Response) => {
     try {
       const score = Number(req.params.score);
       const result = await dotsAssessmentQueries.getClassificationByScore(score);
@@ -67,7 +67,7 @@ const dotsAssessmentQueries = require('../sql/queries/dots_assessment.js');
   };
 
 
-module.exports = (app) => {
+export default function classificationRoute(app: Application): void {
     app.get('/classification', getAllClassifications); 
     app.get('/classification/score/:score',getClassificationByScore);
 };

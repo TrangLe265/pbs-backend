@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
         /* File Layout */
-        "rootDir": "./src",
-        "outDir": "./dist",
+        "rootDir": "src",
+        "outDir": "dist",
 
         /* Environment */
         "target": "ES2020",
@@ -11,6 +11,7 @@
         "esModuleInterop": true,
         "moduleResolution": "node",
         "types": ["node"],
+        "allowJs": true,
 
         /* Output options */
         "sourceMap": true,
@@ -23,7 +24,5 @@
         /* Recommended developer options */
         "noImplicitAny": false,
         "resolveJsonModule": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
+    }
 }

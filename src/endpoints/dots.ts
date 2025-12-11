@@ -1,8 +1,8 @@
-const dotsQueries = require('../sql/queries/dots_score.js');
-const liftQueries = require('../sql/queries/lift.js');
-const userQueries = require('../sql/queries/app_user.js');
-const coefficientsQueries = require('../sql/queries/coefficients.js');
-
+import * as dotsQueries from '../sql/queries/dots_score';
+import * as liftQueries from '../sql/queries/lift';
+import * as userQueries from '../sql/queries/app_user';
+import * as coefficientsQueries from '../sql/queries/coefficients';
+import { Request, Response, Application } from "express";
 
     /**
  * @swagger
@@ -23,7 +23,7 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
  *       404:
  *         description: Score not found
  */
-    const getScoreById = async (req, res) => {
+    const getScoreById = async (req: Request, res: Response) => {
       try {
         const { scoreId } = req.params;
         const result = await dotsQueries.getScoreById(scoreId);
@@ -54,7 +54,7 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
  *       200:
  *         description: List of DOTS scores for the user
  */
-  const getAllScore =  async (req,res) => {
+  const getAllScore =  async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
       const result = await dotsQueries.getAllScore(userId);
@@ -97,7 +97,7 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
  *       400:
  *         description: Invalid input
  */
-  const addScore = async (req,res) => {
+  const addScore = async (req: Request, res: Response) => {
     try {
       const { user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body;
 
@@ -114,12 +114,12 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
 
       if (!user.rows[0]) return res.status(400).json({ message: "Invalid userId" });
 
-      const body_weight = parseFloat(user.rows[0].body_weight);
+      const body_weight = Number(user.rows[0].body_weight);
       const sex = user.rows[0].sex;
       const coeffs = await coefficientsQueries.getCoefficientsBySex(sex);
 
       const {a,b,c,d,e} = coeffs.rows[0];
-      const score = parseFloat(total * 500 / (
+      const score = Number(total * 500 / (
         a * Math.pow(body_weight, 4) +
         b * Math.pow(body_weight, 3) +
         c * Math.pow(body_weight, 2) +
@@ -136,7 +136,7 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
   };
 
 
-module.exports = (app) => {
+export default function dotsRoute(app: Application): void {
     app.get('/dots/:scoreId', getScoreById);
     app.get('/dots/user/:userId', getAllScore);
     app.post('/dots',addScore); 

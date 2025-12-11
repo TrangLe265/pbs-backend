@@ -1,4 +1,5 @@
-const userQueries = require('../sql/queries/app_user.js');
+import * as  userQueries from '../sql/queries/app_user.js';
+import { Request, Response, Application } from "express";
 
 /**
  * @swagger
@@ -31,7 +32,7 @@ const userQueries = require('../sql/queries/app_user.js');
  *         description: User not found
  */
 
-const getUserById = async (req, res) => {
+const getUserById = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const result = await userQueries.getDataByUserId(userId);
@@ -93,7 +94,7 @@ const getUserById = async (req, res) => {
  *       404:
  *         description: User not found
  */
-const updateUserWeight = async (req, res) => {
+const updateUserWeight = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const { weight } = req.body;
 
@@ -120,7 +121,7 @@ const updateUserWeight = async (req, res) => {
 };
 
 
-module.exports = (app) => {
+export default function userRoute(app: Application): void {
   app.get('/user/:userId', getUserById);
   app.put('/user/:userId', updateUserWeight);
 };

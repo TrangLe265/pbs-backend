@@ -1,5 +1,6 @@
-const liftQueries = require('../sql/queries/lift.js');
-const Joi = require('joi');
+import * as  liftQueries from '../sql/queries/lift';
+import Joi from 'joi';
+import { Request, Response, Application } from "express";
 
 const liftSchema = Joi.object({
   user_id: Joi.number().integer().required(),
@@ -26,7 +27,7 @@ const liftSchema = Joi.object({
  *       200:
  *         description: Lift retrieved successfully
  */
-    const getLiftByLiftId = async (req,res) => {
+    const getLiftByLiftId = async (req: Request, res: Response) => {
         try {
             const { liftId } = req.params;
             const result = await liftQueries.getLiftByLiftId(liftId);
@@ -60,14 +61,14 @@ const liftSchema = Joi.object({
  *       200:
  *         description: List of lifts for the user and type
  */
-  const getLiftByTypeByUserId = async (req,res) => {
+  const getLiftByTypeByUserId = async (req: Request, res: Response) => {
     try {
         const {userId, liftTypeId} = req.params; 
         const result = await liftQueries.getLiftByTypeByUserId(userId, liftTypeId);
         res.json(result.rows); 
 
     } catch (err) {
-        console.error(err.message);
+        console.error((err as Error).message);
         res.status(500).send('Internal Server Error');
     }
   }
@@ -165,7 +166,7 @@ const liftSchema = Joi.object({
  *       400:
  *         description: Validation error
  */
-  const editLiftById = async (req,res) => {
+  const editLiftById = async (req: Request, res: Response) => {
     const { error } = liftSchema.validate(req.body, { abortEarly: false });
     if (error) {
       return res.status(400).json({
@@ -202,7 +203,7 @@ const liftSchema = Joi.object({
  *       200:
  *         description: Lift deleted successfully
  */
-  const deleteLiftById = async (req,res) => {
+  const deleteLiftById = async (req: Request, res: Response) => {
     try {
       const { liftId } = req.params;
       await liftQueries.deleteLiftById(liftId);
@@ -214,7 +215,7 @@ const liftSchema = Joi.object({
   };
 
 
-module.exports = (app) => {
+export default function liftRoute(app: Application): void {
     app.get('/lift/:liftId', getLiftByLiftId); 
     app.get('/lift/:liftTypeId/:userId', getLiftByTypeByUserId);
     app.post('/lift', addLift);

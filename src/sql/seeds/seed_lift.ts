@@ -1,8 +1,8 @@
-const db = require("../../db.js");
+import pool from '../../db'; //pool is export default from db.ts, so can import directly
 
-const seedLiftData = async () => {
+export default async function seedLiftData() {
     try {
-        const userResult = await db.query("SELECT id FROM app_user WHERE name='John Doe'");
+        const userResult = await pool.query("SELECT id FROM app_user WHERE name='John Doe'");
         if (!userResult.rows || userResult.rows.length === 0) {
             throw new Error('User John Doe not found in app_user');
         }
@@ -13,14 +13,14 @@ const seedLiftData = async () => {
         const liftTypeIds = {};
 
         for (const type of liftTypes) {
-            const res = await db.query("SELECT id FROM lift_type WHERE name=$1", [type]);
+            const res = await pool.query("SELECT id FROM lift_type WHERE name=$1", [type]);
             if (!res.rows || res.rows.length === 0) {
                 throw new Error(`Required FK value not found in lift_type for ${type}`);
             }
             liftTypeIds[type] = res.rows[0].id;
         }
 
-        const result = await db.query('SELECT COUNT(*) FROM lift');
+        const result = await pool.query('SELECT COUNT(*) FROM lift');
         const liftCount = parseInt(result.rows[0].count);
 
         if (liftCount > 0) {
@@ -29,14 +29,14 @@ const seedLiftData = async () => {
         }
 
         // Seed for back squat
-        await db.query(`
+        await pool.query(`
             INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes)
             VALUES 
             ($1, 100.0, $2, '2025-01-02', 'first attempt')
             ON CONFLICT DO NOTHING;
         `, [userId, liftTypeIds['back squat']]); 
 
-        await db.query(`
+        await pool.query(`
             INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes)
             VALUES 
             ($1, 120.0, $2, '2025-01-02', 'second attempt')
@@ -44,14 +44,14 @@ const seedLiftData = async () => {
         `, [userId, liftTypeIds['back squat']]); 
 
         // Seed for deadlift
-        await db.query(`
+        await pool.query(`
             INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes)
             VALUES 
             ($1, 140.0, $2, '2025-01-02', 'first deadlift')
             ON CONFLICT DO NOTHING;
         `, [userId, liftTypeIds['deadlift']]); 
 
-        await db.query(`
+        await pool.query(`
             INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes)
             VALUES 
             ($1, 160.0, $2, '2025-01-02', 'second deadlift')
@@ -59,14 +59,14 @@ const seedLiftData = async () => {
         `, [userId, liftTypeIds['deadlift']]); 
 
         // Seed for bench
-        await db.query(`
+        await pool.query(`
             INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes)
             VALUES 
             ($1, 80.0, $2, '2025-01-02', 'first bench')
             ON CONFLICT DO NOTHING;
         `, [userId, liftTypeIds['bench']]); 
 
-        await db.query(`
+        await pool.query(`
             INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes)
             VALUES 
             ($1, 90.0, $2, '2025-01-02', 'second bench')
@@ -78,5 +78,3 @@ const seedLiftData = async () => {
         console.log('Error while seeding lift: ', err); 
     } 
 }; 
-
-module.exports = {seedLiftData};

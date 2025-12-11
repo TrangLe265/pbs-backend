@@ -1,5 +1,5 @@
-const coefficientsQueries = require('../sql/queries/coefficients.js');
-
+import * as coefficientsQueries from '../sql/queries/coefficients';
+import { Request, Response, Application } from "express";
 /**
  * @swagger
  * /coefficients/{sex}:
@@ -39,7 +39,7 @@ const coefficientsQueries = require('../sql/queries/coefficients.js');
  *                   e:
  *                     type: number
  */
-const getCoefficientsBySex = async (req,res) => {
+const getCoefficientsBySex = async (req: Request, res: Response) => {
   try {
     const sex = req.params.sex;
     const result = await coefficientsQueries.getCoefficientsBySex(sex);
@@ -50,6 +50,6 @@ const getCoefficientsBySex = async (req,res) => {
   }
 };
 
-module.exports = (app) => {
+export default function coefficientsRoute(app: Application): void {
     app.get('/coefficients/:sex', getCoefficientsBySex); 
 };
