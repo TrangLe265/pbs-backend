@@ -92,7 +92,7 @@ erDiagram
   npm install
   ```
 
-3. **Configure environment variables**
+3. **Configure environment variables and docker-compose**
 
   Create a `.env` file in the root directory:
   ```
@@ -102,6 +102,50 @@ erDiagram
   DB_PASSWORD=your-password
   DB_NAME=mydb
   ```
+  Create a `docker-compose.yml` file in the root directory: 
+  ```
+  version: "3.9"
+  services:
+    db:
+      image: postgres:16
+      container_name: my_postgres
+      restart: always
+      environment:
+        POSTGRES_USER: yourPGUsername
+        POSTGRES_PASSWORD: yourPGUserPW
+        POSTGRES_DB: yourPGDatabasenName
+      ports:
+        - "5432:5432"
+      volumes:
+        - pgdata:/var/lib/postgresql/data
+        - ./src/sql/migrations:/docker-entrypoint-initdb.d 
+        
+
+    backend:
+      build: .
+      container_name: my_backend
+      restart: always
+      ports:
+        - "3000:3000"
+      env_file:
+        - .env
+      depends_on:
+        - db
+
+    test:
+      build: .
+      env_file:
+        - .env
+      depends_on:
+        - db
+      command: sh -c "until pg_isready -h db -p 5432 -U yourPGUsername; do echo 'waiting for db...'; sleep 2; done; npm test"
+
+  volumes:
+    pgdata:
+
+  ```
+
+
 
 4. **Build and start the backend and database with Docker**
   ```bash
@@ -110,10 +154,8 @@ erDiagram
   ```
   If you encounter a problem, and would wish to build backend and database with a clean slate, run:
   ```bash
-    #Stop the current running docker
-    docker compose down
-    #Remove all data in database 
-    docker volume rm yourDockerContainerName_pgdata
+    #Stop and remove all of the current running docker
+    docker compose down --volume
     #Rebuild backend, database and test on docker with new changes
     docker compose build
     #Start docker 
@@ -123,7 +165,6 @@ erDiagram
   ```bash
   npm run seed 
   ```
-  > `'my_backend'` is the backend container name from `docker-compose.yml`.
 
 5. **Connect to the database**
   ```bash
