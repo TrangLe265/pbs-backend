@@ -34,8 +34,8 @@ export async function getLiftByTypeByUserId(userId: number, liftTypeId: number) 
 export async function addLift(userId: number, weightLifted: number, liftTypeId: number, date: Date, notes: string) {
     try {
         return await pool.query(
-            'INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes) VALUES ($1, $2, $3, $4, $5)',
-            [userId, weightLifted, liftTypeId, date, notes]
+            'INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes) VALUES ($1, $2, $3, $4, $5) RETURNING *' ,
+            [userId, weightLifted, liftTypeId, date, notes] 
         );
     } catch (err) {
         console.error(
