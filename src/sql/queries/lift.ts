@@ -12,17 +12,17 @@ export async function getAllLift() {
 };
 
 //get a specific lift by its id
-export async function getLiftByLiftId(param) {
+export async function getLiftByLiftId(liftId: number) {
     try {
-        return await pool.query('SELECT * FROM lift WHERE id = $1', [param]);
+        return await pool.query('SELECT * FROM lift WHERE id = $1', [liftId]);
     } catch (err) {
-        console.error(`Error fetching lift by id (${param}):`, err);
+        console.error(`Error fetching lift by id (${liftId}):`, err);
         throw err;
     }
 };
 
 //get all lifts of a specific typer by an user 
-export async function getLiftByTypeByUserId(userId, liftTypeId) {
+export async function getLiftByTypeByUserId(userId: number, liftTypeId: number) {
     try {
         return await pool.query('SELECT * FROM lift WHERE user_id = $1 AND lift_type_id = $2', [userId, liftTypeId]);
     } catch (err) {
@@ -31,7 +31,7 @@ export async function getLiftByTypeByUserId(userId, liftTypeId) {
     }
 };
 
-export async function addLift(userId, weightLifted, liftTypeId, date, notes) {
+export async function addLift(userId: number, weightLifted: number, liftTypeId: number, date: Date, notes: string) {
     try {
         return await pool.query(
             'INSERT INTO lift (user_id, weight_lifted, lift_type_id, date, notes) VALUES ($1, $2, $3, $4, $5)',
@@ -46,7 +46,7 @@ export async function addLift(userId, weightLifted, liftTypeId, date, notes) {
     }
 };
 
-export async function deleteLiftById(liftId)  {
+export async function deleteLiftById(liftId: number)  {
     try {
         return await pool.query("DELETE FROM lift WHERE id = $1",[liftId]); 
 
@@ -56,7 +56,7 @@ export async function deleteLiftById(liftId)  {
     }
 }
 
-export async function editLiftById(weightLifted, date, notes, liftId) {
+export async function editLiftById(weightLifted: number, date: Date, notes: string, liftId: number) {
     try {
         return await pool.query("UPDATE lift SET weight_lifted = $1, date = $2, notes = $3 WHERE id = $4",[weightLifted, date, notes, liftId])
 
@@ -64,9 +64,9 @@ export async function editLiftById(weightLifted, date, notes, liftId) {
         console.error(`Error editing lift with id ${liftId}`);
         throw err;
     }
-}
+};
 
-export async function getWeightLiftedByLiftId(liftId) {
+export async function getWeightLiftedByLiftId(liftId: number) {
     try{
         return await pool.query("SELECT weight_lifted FROM lift WHERE id=$1",[liftId])
     } catch(err){

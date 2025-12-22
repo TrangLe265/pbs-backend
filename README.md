@@ -155,7 +155,7 @@ erDiagram
   If you encounter a problem, and would wish to build backend and database with a clean slate, run:
   ```bash
     #Stop and remove all of the current running docker
-    docker compose down --volume
+    docker compose down --volumes
     #Rebuild backend, database and test on docker with new changes
     docker compose build
     #Start docker 

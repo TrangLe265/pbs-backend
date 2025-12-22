@@ -30,8 +30,8 @@ const liftSchema = Joi.object({
     const getLiftByLiftId = async (req: Request, res: Response) => {
         try {
             const { liftId } = req.params;
-            const result = await liftQueries.getLiftByLiftId(liftId);
-            res.json(result.rows);
+            const result = await liftQueries.getLiftByLiftId(Number(liftId));
+            res.json(result.rows[0]);
         } catch (err) {
             console.error(err);
             res.status(500).send('Internal Server Error');
@@ -64,7 +64,7 @@ const liftSchema = Joi.object({
   const getLiftByTypeByUserId = async (req: Request, res: Response) => {
     try {
         const {userId, liftTypeId} = req.params; 
-        const result = await liftQueries.getLiftByTypeByUserId(userId, liftTypeId);
+        const result = await liftQueries.getLiftByTypeByUserId(Number(userId), Number(liftTypeId));
         res.json(result.rows); 
 
     } catch (err) {
@@ -119,7 +119,7 @@ const liftSchema = Joi.object({
 
     try {
       const { user_id, weight_lifted, lift_type_id, date, notes } = value;
-      await liftQueries.addLift(user_id, weight_lifted, lift_type_id, date, notes);
+      await liftQueries.addLift(Number(user_id), Number(weight_lifted), Number(lift_type_id), new Date(date), notes);
       res.status(201).send({
         message: 'Lift added successfully',
         lift: { user_id, weight_lifted, lift_type_id, date, notes }
@@ -178,7 +178,7 @@ const liftSchema = Joi.object({
     try {
       const { liftId } = req.params;
       const { weight_lifted, date, notes } = req.body;
-      await liftQueries.editLiftById(weight_lifted, date, notes, liftId);
+      await liftQueries.editLiftById(Number(weight_lifted), new Date(date), notes, Number(liftId));
       res.status(200).send({ message: 'Lift edited successfully' });
     } catch (err) {
       console.error(err);
@@ -206,7 +206,7 @@ const liftSchema = Joi.object({
   const deleteLiftById = async (req: Request, res: Response) => {
     try {
       const { liftId } = req.params;
-      await liftQueries.deleteLiftById(liftId);
+      await liftQueries.deleteLiftById(Number(liftId));
       res.status(200).send({ message: 'Lift deleted successfully' });
     } catch (err) {
       console.error(err);

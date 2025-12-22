@@ -5,11 +5,11 @@ RUN apt-get update && apt-get install -y postgresql-client
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 COPY . .
 RUN npm run build
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["npm", "start", "test"]
