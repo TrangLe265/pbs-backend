@@ -1,7 +1,6 @@
 import {describe, expect, test, beforeAll, afterAll} from '@jest/globals';
 import pool from '../db';
 import {getLiftByLiftId,getLiftByTypeByUserId, addLift,deleteLiftById,editLiftById} from '../sql/queries/lift';
-import { after } from 'node:test';
 
 describe('lift queries', () => {
   let testUserId;
