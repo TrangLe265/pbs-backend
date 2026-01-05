@@ -1,15 +1,16 @@
 import * as  userQueries from '../sql/queries/app_user.js';
 import { Request, Response, Application } from "express";
+import { User, UpdateUserWeight, UserParam} from '../types/User.interface';
 
 /**
  * @swagger
- * /user/{userId}:
+ * /user/{id}:
  *   get:
  *     summary: Get user info by user ID
  *     tags: [User]
  *     parameters:
  *       - in: path
- *         name: userId
+ *         name: id
  *         required: true
  *         schema:
  *           type: integer
@@ -32,29 +33,31 @@ import { Request, Response, Application } from "express";
  *         description: User not found
  */
 
-const getUserById = async (req: Request, res: Response) => {
+const getUserById = async (req: Request<UserParam>, res: Response< User | { message: string }>) => {
   try {
-    const { userId } = req.params;
-    const result = await userQueries.getDataByUserId(userId);
-    if (!result.rows[0]) {
+    const id = Number(req.params.id);
+    if (isNaN(id)) { return res.status(400).json({ message: 'Invalid userId' }); }
+    const result = await userQueries.getDataByUserId(id);
+    const user : User | undefined = result.rows[0];
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(result.rows[0]);
+    res.json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({ message: 'Internal Server Error'});
   }
 };
 
 /**
  * @swagger
- * /user/{userId}:
+ * /user/{id}:
  *   put:
  *     summary: Update user's body weight
  *     tags: [User]
  *     parameters:
  *       - in: path
- *         name: userId
+ *         name: id
  *         required: true
  *         schema:
  *           type: integer
@@ -66,10 +69,10 @@ const getUserById = async (req: Request, res: Response) => {
  *           schema:
  *             type: object
  *             properties:
- *               weight:
+ *               body_weight:
  *                 type: number
  *             required:
- *               - weight
+ *               - body_weight
  *     responses:
  *       200:
  *         description: User weight updated successfully
@@ -94,34 +97,37 @@ const getUserById = async (req: Request, res: Response) => {
  *       404:
  *         description: User not found
  */
-const updateUserWeight = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  const { weight } = req.body;
+const updateUserWeight = async (
+  req: Request<UserParam,{},UpdateUserWeight>, //Express has its own Request generic order, reqBody is in the third position
+  res: Response<{message: string} | {message: string, user: User}>
+) => {
+  const id = Number(req.params.id);
+  if (isNaN(id)) { return res.status(400).json({ message: 'Invalid userId' }); }
 
-  if (typeof weight !== 'number' || weight <= 0) {
+  const bodyWeight = req.body.body_weight;
+  if (typeof bodyWeight !== 'number' || bodyWeight <= 0) {
     return res.status(400).json({
-      message: "Validation error",
-      details: ["weight must be a positive number"]
+      message: "Validation error, weight must be a positive number"
     });
   }
 
   try {
-    const result = await userQueries.updateWeightByUserId(userId, weight);
-    if (!result.rows[0]) {
+    const result = await userQueries.updateWeightByUserId(id, bodyWeight);
+    const user : User | undefined = result.rows[0]; 
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({
       message: 'User weight updated successfully',
-      user: result.rows[0]
+      user
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({message: 'Internal Server Error'});
   }
 };
 
-
 export default function userRoute(app: Application): void {
-  app.get('/user/:userId', getUserById);
-  app.put('/user/:userId', updateUserWeight);
+  app.get('/user/:id', getUserById);
+  app.put('/user/:id', updateUserWeight);
 };
