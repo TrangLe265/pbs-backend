@@ -3,7 +3,7 @@ export interface DotsScore {
     score: number;
     dateCalculated: Date;
     userId: number;
-    benchLiftId: number;
-    squatLiftId: number;
-    deadliftLiftId: number;
+    bench_lift_id: number;
+    squat_lift_id: number;
+    deadlift_lift_id: number;
 }
