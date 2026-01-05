@@ -56,9 +56,9 @@ export async function deleteLiftById(liftId: number)  {
     }
 }
 
-export async function editLiftById(weightLifted: number, date: Date, notes: string, liftId: number) {
+export async function editLiftById(weightLifted: number, date: Date|undefined, notes: string|undefined, liftId: number) {
     try {
-        return await pool.query("UPDATE lift SET weight_lifted = $1, date = $2, notes = $3 WHERE id = $4",[weightLifted, date, notes, liftId])
+        return await pool.query("UPDATE lift SET weight_lifted = $1, date = COALESCE($2, date), notes = COALESCE($3, notes) WHERE id = $4",[weightLifted, date??null, notes??null, liftId])
 
     } catch (err){
         console.error(`Error editing lift with id ${liftId}`);
