@@ -1,5 +1,7 @@
 import * as coefficientsQueries from '../sql/queries/coefficients';
 import { Request, Response, Application } from "express";
+import { Coefficient } from '../types/Coefficient.interface';
+
 /**
  * @swagger
  * /coefficients/{sex}:
@@ -39,14 +41,17 @@ import { Request, Response, Application } from "express";
  *                   e:
  *                     type: number
  */
-const getCoefficientsBySex = async (req: Request, res: Response) => {
+const getCoefficientsBySex = async (
+  req: Request<{sex: 'male' | 'female'}>, 
+  res: Response<{message: string}|Coefficient>
+) => {
   try {
     const sex = req.params.sex;
     const result = await coefficientsQueries.getCoefficientsBySex(sex);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({message: 'Internal Server Error'});
   }
 };
 
