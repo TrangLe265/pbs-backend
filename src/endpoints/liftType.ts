@@ -1,5 +1,6 @@
 import * as liftTypeQueries from '../sql/queries/lift_type';
 import { Request, Response, Application } from "express";
+import { LiftType } from '../types/LiftType.interface';
 
 /**
  * @swagger
@@ -22,13 +23,13 @@ import { Request, Response, Application } from "express";
  *                   name:
  *                     type: string
  */
-const getAllLiftTypes = async (req: Request, res: Response) => {
+const getAllLiftTypes = async (req: Request, res: Response<LiftType| {message: string}>) => {
     try {
       const result = await liftTypeQueries.getAllLiftTypes();
       res.json(result.rows);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).json({message: 'Internal Server Error'});
     }
 }; 
 
