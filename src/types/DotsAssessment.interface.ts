@@ -5,3 +5,7 @@ export interface DotsAssessment {
     classification: 'Poor'|'Average'|'Good'|'Strong'|'Very Strong'|'Elite';
     description: string; 
 }
+
+export interface AssessmentParam {
+    score: number; 
+}

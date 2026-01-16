@@ -3,10 +3,12 @@ import * as liftQueries from '../sql/queries/lift';
 import * as userQueries from '../sql/queries/app_user';
 import * as coefficientsQueries from '../sql/queries/coefficients';
 import { Request, Response, Application } from "express";
+import { DotsScore, ScoreParam, NewScore } from '../types/DotsScore.interface';
+import { UserParam } from '../types/User.interface';
 
     /**
  * @swagger
- * /dots/{scoreId}:
+ * /dots/{id}:
  *   get:
  *     summary: Get DOTS score by score ID
  *     tags: [DOTS scores]
@@ -23,23 +25,30 @@ import { Request, Response, Application } from "express";
  *       404:
  *         description: Score not found
  */
-    const getScoreById = async (req: Request, res: Response) => {
+    const getScoreById = async (
+      req: Request<ScoreParam>, 
+      res: Response<{message: string}| DotsScore>
+    ) => {
       try {
-        const { scoreId } = req.params;
-        const result = await dotsQueries.getScoreById(scoreId);
-        if (!result.rows[0]) {
+        const id = Number(req.params.id);
+        if (isNaN(id)){
+          return res.status(400).json({message: "Invalid score id"})
+        }
+        const result = await dotsQueries.getScoreById(id);
+        const score: DotsScore | undefined = result.rows[0]
+        if (!score) {
           return res.status(404).json({ message: 'Score not found' });
         }
-        res.json(result.rows[0]);
+        res.json(score);
       } catch (err) {
         console.error(err);
-        res.status(500).send('Internal Server Error');
+        res.status(500).json({message: 'Internal Server Error'});
       }
     };
 
  /**
  * @swagger
- * /dots/user/{userId}:
+ * /dots/user/{user_id}:
  *   get:
  *     summary: Get all DOTS scores by userId
  *     tags: [DOTS scores]
@@ -54,14 +63,24 @@ import { Request, Response, Application } from "express";
  *       200:
  *         description: List of DOTS scores for the user
  */
-  const getAllScore =  async (req: Request, res: Response) => {
+  const getAllScore =  async (
+    req: Request<UserParam>, 
+    res: Response<{message: string}| DotsScore[]>) => {
     try {
-      const { userId } = req.params;
-      const result = await dotsQueries.getAllScore(userId);
-      res.json(result.rows);
+      const user_id = Number(req.params.id);
+      if (isNaN(user_id)){
+          return res.status(400).json({message: "Invalid user id"})
+        }
+
+      const result = await dotsQueries.getAllScore(user_id);
+      const scores: DotsScore[] | undefined = result.rows;
+      if (scores?.length === 0){
+        return res.json({message: "No scores available"})
+      }
+      res.json(scores);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).json({message:'Internal Server Error'});
     }
   };
 
@@ -97,7 +116,10 @@ import { Request, Response, Application } from "express";
  *       400:
  *         description: Invalid input
  */
-  const addScore = async (req: Request, res: Response) => {
+  const addScore = async (
+    req: Request<{},{},NewScore>, 
+    res: Response<{message: string}>
+  ) => {
     try {
       const { user_id, bench_lift_id, squat_lift_id, deadlift_lift_id } = req.body;
 
@@ -128,16 +150,16 @@ import { Request, Response, Application } from "express";
       )).toFixed(2);
 
       await dotsQueries.addScore(score, user_id, bench_lift_id, squat_lift_id, deadlift_lift_id);
-      res.status(201).send({ message: 'DOTS score added', score });
+      res.status(201).json({ message: 'New DOTS score added'});
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).json({message: 'Internal Server Error'});
     }
   };
 
 
 export default function dotsRoute(app: Application): void {
-    app.get('/dots/:scoreId', getScoreById);
+    app.get('/dots/:id', getScoreById);
     app.get('/dots/user/:userId', getAllScore);
     app.post('/dots',addScore); 
     
